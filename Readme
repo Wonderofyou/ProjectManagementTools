@@ -1,3 +1,9 @@
 backend: cd backend -> npm install -> node index.js
+ở trong file.env của backend, thêm vào các biến môi trường sau:
+JWT_SECRET = secret
+MONGO_URL = urlmongodb
+
 
 frontend: cd frontend -> npm install -> npm run dev
+ở trong file.env của frontend, thêm vào các biến môi trường sau:
+VITE_API_BASE_URL = http://localhost:8000 (thay 8000 bằng port của backend)
