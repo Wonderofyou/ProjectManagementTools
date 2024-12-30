@@ -5,7 +5,8 @@ import { MdOutlineDashboard } from "react-icons/md";
 import { RiSettings4Line } from "react-icons/ri";
 import { TbReportAnalytics } from "react-icons/tb";
 import { AiOutlineTeam, AiOutlineHeart } from "react-icons/ai";
-import { GiSteam } from "react-icons/gi";
+import { GoProject } from "react-icons/go";
+
 import { FiMessageSquare, FiFolder, FiShoppingCart } from "react-icons/fi";
 import { Link } from "react-router-dom";
 
@@ -16,6 +17,7 @@ const Sidebar = () => {
         { name: "messages", link: "/messages", icon: FiMessageSquare },
         { name: "report", link: "/report", icon: HiOutlineDocumentReport },
         { name: "File Manager", link: "/file", icon: FiFolder },
+        { name: "Project", link: "/project", icon: GoProject },
         { name: "Setting", link: "/setting", icon: RiSettings4Line },
     ];
     const [open, setOpen] = useState(true);
