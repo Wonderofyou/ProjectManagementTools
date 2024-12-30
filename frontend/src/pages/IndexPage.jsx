@@ -1,42 +1,57 @@
 import React, { useContext } from "react";
-import { UserContext } from "../UserContext"; // Import UserContext
+import { UserContext } from "../UserContext";
 import Introduction from "../Component/Introduction";
 import HomepageImage from "../Component/HomepageImage";
 import Sidebar from "../Component/Sidebar";
+import Navbar from "../Component/Navbar";
+import Footer from "../Component/Footer";
+
 function IndexPage() {
-  // Sử dụng UserContext để lấy thông tin người dùng và trạng thái sẵn sàng
   const { user, ready } = useContext(UserContext);
 
-  // Nếu chưa có thông tin người dùng và chưa tải xong, hiển thị loading
   if (!ready) {
     return <div>Loading...</div>;
   }
 
-  // Nếu người dùng đã đăng nhập, hiển thị giao diện dành cho người dùng
   if (user) {
     return (
       <div className="flex min-h-screen">
-        {/* Sidebar cố định */}
-        <Sidebar className="fixed top-0 left-0 bg-[#0e0e0e] w-72 h-full" />
-
-        {/* Nội dung chính có khoảng cách từ Sidebar */}
+        <Sidebar className="fixed top-0 left-0 w-72 h-full" />
         <div className="ml-72 flex-1 p-4">
-          <h1>Chào mừng, {user.name}!</h1>
-          <p>Bạn đã đăng nhập thành công. Code gì đó nè.</p>
-          {/* Các thành phần khác dành cho người dùng đã đăng nhập */}
+          <h1>Welcome, {user.name}!</h1>
         </div>
       </div>
     );
-  } else {
-    // Nếu chưa đăng nhập, hiển thị giao diện yêu cầu đăng nhập
-    return (
-      <div className="flex">
-        <Introduction />
-        <HomepageImage />
-      </div>
-
-    );
   }
+
+  return (
+    <div className="flex flex-col min-h-screen">
+      <Navbar />
+      <main className="flex-grow relative">
+        {/* chỉ cho phần content */}
+        <div 
+          className="absolute inset-0" 
+          style={{
+            backgroundColor: '#ffffff',
+            backgroundImage: `
+              radial-gradient(at 100% 0%, hsla(220, 60%, 98%, 1) 0px, transparent 50%),
+              radial-gradient(at 0% 0%, hsla(220, 60%, 98%, 1) 0px, transparent 50%),
+              radial-gradient(at 100% 100%, hsla(220, 60%, 98%, 1) 0px, transparent 50%),
+              radial-gradient(at 0% 100%, hsla(220, 60%, 98%, 1) 0px, transparent 50%)
+            `,
+          }}
+        />
+        {/* Content */}
+        <div className="relative z-10 max-w-7xl mx-auto px-4">
+          <div className="flex flex-row items-center justify-between gap-8 py-20">
+            <Introduction />
+            <HomepageImage />
+          </div>
+        </div>
+      </main>
+      <Footer />
+    </div>
+  );
 }
 
 export default IndexPage;
