@@ -17,7 +17,7 @@ const Sidebar = () => {
         { name: "messages", link: "/messages", icon: FiMessageSquare },
         { name: "report", link: "/report", icon: HiOutlineDocumentReport },
         { name: "File Manager", link: "/file", icon: FiFolder },
-        { name: "Project", link: "/project", icon: GoProject },
+        { name: "Project", link: "/projects", icon: GoProject },
         { name: "Setting", link: "/setting", icon: RiSettings4Line },
     ];
     const [open, setOpen] = useState(true);

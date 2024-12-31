@@ -2,12 +2,13 @@ import './App.css'
 import { Route, Routes } from "react-router-dom";
 import IndexPage from "./pages/IndexPage.jsx";
 import LoginPage from "./pages/LoginPage";
+import ProjectsPage from "./pages/ProjectsPage.jsx";
 import Layout from "./Layout";
 import RegisterPage from "./pages/RegisterPage";
 import axios from "axios";
 import { UserContextProvider } from "./UserContext";
 import ProfilePage from "./pages/ProfilePage.jsx";
-import ProjectPage from './pages/ProjectPage.jsx';
+import AddNewProjectPage from "./pages/AddNewProjectPage.jsx";
 
 
 axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL;
@@ -22,7 +23,8 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/account" element={<ProfilePage />} />
-          <Route path="/project" project={<ProjectPage />} />
+          <Route path='/projects' element={<ProjectsPage />} />
+          <Route path="/account/projects/new" element={<AddNewProjectPage />} />
         </Route>
       </Routes>
     </UserContextProvider>
