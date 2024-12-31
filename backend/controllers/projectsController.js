@@ -6,8 +6,9 @@ const jwt = require("jsonwebtoken");
 
 require('dotenv').config()
 const jwtSecret = process.env.JWT_SECRET; // Đảm bảo thay bằng secret thực tế
-// Hàm đăng ký người dùng
+// project controller
 const projectsController = {
+    // Hàm tạo dự án
     createProject: async (req, res) => {
         try {
             const { token } = req.cookies;
