@@ -7,6 +7,7 @@ import RegisterPage from "./pages/RegisterPage";
 import axios from "axios";
 import { UserContextProvider } from "./UserContext";
 import ProfilePage from "./pages/ProfilePage.jsx";
+import ProjectPage from './pages/ProjectPage.jsx';
 
 
 axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL;
@@ -21,6 +22,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/account" element={<ProfilePage />} />
+          <Route path="/project" project={<ProjectPage />} />
         </Route>
       </Routes>
     </UserContextProvider>
