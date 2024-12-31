@@ -4,7 +4,8 @@ const { Schema } = mongoose;
 const NotificationSchema = new Schema({
     created_by:
     {
-        type: Schema.Types.ObjectId, ref: 'user', required: true
+        type: Schema.Types.ObjectId,
+        ref: 'user', required: true
     }, // Người tạo thông báo
     title:
     {
