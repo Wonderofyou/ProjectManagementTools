@@ -5,6 +5,7 @@ const dotenv = require("dotenv");
 const cookieParser = require("cookie-parser");
 const authRoute = require("./routes/authRoute");
 const userRoute = require("./routes/userRoute");
+const projectRoute = require("./routes/projectRoute");
 const connectDB = require("./config/db");
 dotenv.config();
 
@@ -19,6 +20,7 @@ app.use(express.json());
 
 app.use("/v1/auth", authRoute);
 app.use("/v1/user", userRoute);
+app.use("/v1/projects", projectRoute);
 
 app.listen(8000, () => {
   console.log("Server is running");

@@ -1,0 +1,75 @@
+const Project = require("../models/Project");
+const User = require("../models/User");
+const ProjectMembers = require("../models/ProjectMembers");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+
+require('dotenv').config()
+const jwtSecret = process.env.JWT_SECRET; // Đảm bảo thay bằng secret thực tế
+// Hàm đăng ký người dùng
+const projectsController = {
+    createProject: async (req, res) => {
+        try {
+            const { token } = req.cookies;
+
+            if (!token) {
+                return res.status(401).json({ message: 'Authentication required' });
+            }
+
+            // Xác thực token
+            jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+                if (err) {
+                    return res.status(403).json({ message: 'Invalid token' });
+                }
+
+                // Lấy thông tin người dùng
+                const user = await User.findById(userData.id);
+                if (!user) {
+                    return res.status(404).json({ message: 'User not found' });
+                }
+
+                const { name, description, start_date, end_date } = req.body;
+
+                let newProject;
+                try {
+                    newProject = await Project.create({
+                        name: name,
+                        description,
+                        start_date: start_date || Date.now(),
+                        end_date: end_date || Date.now() + 10 * 24 * 60 * 60 * 1000, // Mặc định cộng 10 ngày
+                        owner_id: user._id,
+                    });
+                } catch (projectError) {
+                    console.error('Error creating project:', projectError);
+                    return res.status(500).json({ message: 'Error creating project' });
+                }
+
+                // Thêm người dùng vào ProjectMembers (người tạo dự án là admin)
+                let newProjectMember;
+                try {
+                    newProjectMember = new ProjectMembers({
+                        project_id: newProject._id,
+                        user_id: user._id,
+                        role: 'admin', // Người tạo là admin
+                    });
+                    await newProjectMember.save();
+                } catch (memberError) {
+                    console.error('Error adding member to project:', memberError);
+                    return res.status(500).json({ message: 'Error adding member to project' });
+                }
+
+                // Phản hồi
+                res.status(201).json({
+                    message: 'Project created successfully',
+                    project: newProject,
+                });
+            });
+        } catch (error) {
+            console.error('Error creating project:', error);
+            res.status(500).json({ message: 'Internal server error' });
+        }
+    },
+
+};
+
+module.exports = projectsController;

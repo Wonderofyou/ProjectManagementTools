@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const { create } = require('./User');
 
 const ProjectSchema = new mongoose.Schema(
     {
@@ -13,15 +12,16 @@ const ProjectSchema = new mongoose.Schema(
         },
         start_date: {
             type: Date,
-            require: Date.now
+            default: Date.now // Sửa lỗi cú pháp từ "require: Date.now" thành "default: Date.now"
         },
         end_date: {
             type: Date,
-            default: Date.now + 10
+            default: () => new Date(Date.now() + 10 * 24 * 60 * 60 * 1000) // Sửa để giá trị mặc định là 10 ngày sau
         },
         status: {
             type: String,
-            default: "Start"
+            enum: ["Pending", "On Progress", "Finish"], // Thêm enum để giới hạn giá trị
+            default: "Pending"
         },
         owner_id: {
             type: mongoose.Schema.Types.ObjectId,
@@ -38,6 +38,6 @@ const ProjectSchema = new mongoose.Schema(
     }
 );
 
-const UsersModel = mongoose.model('User', UserSchema); // Creating the model from the schema
+const Project = mongoose.model('Project', ProjectSchema); // Sửa lại tên model để không bị trùng lặp
 
-module.exports = UsersModel;
+module.exports = Project;
