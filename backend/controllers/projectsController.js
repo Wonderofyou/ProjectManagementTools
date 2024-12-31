@@ -70,6 +70,7 @@ const projectsController = {
             res.status(500).json({ message: 'Internal server error' });
         }
     },
+    // mời người khác vòa dự án 
 
 };
 
