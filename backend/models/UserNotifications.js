@@ -12,7 +12,7 @@ const UserNotificationSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Notification', required: true
     }, // ID thông báo
-    read:
+    read_status:
     {
         type: Boolean,
         default: false
