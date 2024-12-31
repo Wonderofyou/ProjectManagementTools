@@ -2,6 +2,7 @@ import './App.css'
 import { Route, Routes } from "react-router-dom";
 import IndexPage from "./pages/IndexPage.jsx";
 import LoginPage from "./pages/LoginPage";
+import ProjectsPage from "./pages/ProjectsPage.jsx";
 import Layout from "./Layout";
 import RegisterPage from "./pages/RegisterPage";
 import axios from "axios";
@@ -21,6 +22,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/account" element={<ProfilePage />} />
+          <Route path='/projects' element={<ProjectsPage />} />
         </Route>
       </Routes>
     </UserContextProvider>
