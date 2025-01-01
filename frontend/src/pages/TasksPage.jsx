@@ -1,24 +1,27 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
 export default function TasksPage() {
+    const { projectId } = useParams(); // Get projectId from URL parameters
     const [tasks, setTasks] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [tasksPerPage] = useState(6); // 3 tasks per row, 2 rows per page (total 6)
-    // const location = useLocation();
-    // const searchParams = new URLSearchParams(location.search);
-    // const projectId = searchParams.get("projectId");
 
     useEffect(() => {
-        axios.get('v1/tasks/get-tasks').then(response => {
-            setTasks(response.data.tasks);
-        })
-            .catch(error => {
-                console.error("Error fetching tasks:", error);
-            });
-    }, []);
+        if (projectId) {
+            axios.get(`/v1/tasks/get-tasks/${projectId}`) // Fixed string interpolation
+                .then(response => {
+                    setTasks(response.data.tasks);
+                    console.log(response.data.tasks);
+                })
+                .catch(error => {
+                    console.error("Error fetching tasks:", error);
+                });
+        }
+    }, [projectId]); // Dependency array updated to react to changes in projectId
 
+    console.log(projectId);
     // Pagination logic
     const indexOfLastTask = currentPage * tasksPerPage;
     const indexOfFirstTask = indexOfLastTask - tasksPerPage;
@@ -61,7 +64,7 @@ export default function TasksPage() {
             </div>
 
             <div className="text-center mt-4">
-                <Link className="inline-flex gap-1 bg-primary text-white py-2 px-6 rounded-full" to={'/account/projects/tasks/new'}>
+                <Link className="inline-flex gap-1 bg-primary text-white py-2 px-6 rounded-full" to={`/projects/${projectId}/tasks/new`}>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
                         <path fillRule="evenodd" d="M12 3.75a.75.75 0 01.75.75v6.75h6.75a.75.75 0 010 1.5h-6.75v6.75a.75.75 0 01-1.5 0v-6.75H4.5a.75.75 0 010-1.5h6.75V4.5a.75.75 0 01.75-.75z" clipRule="evenodd" />
                     </svg>

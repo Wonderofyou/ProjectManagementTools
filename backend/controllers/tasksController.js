@@ -1,6 +1,8 @@
 const Task = require("../models/Task");
 const ProjectMembers = require("../models/ProjectMembers");
 const jwt = require("jsonwebtoken");
+const Project = require("../models/Project");
+const mongoose = require('mongoose');
 
 require("dotenv").config();
 const jwtSecret = process.env.JWT_SECRET;
@@ -21,18 +23,24 @@ const tasksController = {
                     return res.status(403).json({ message: "Invalid token" });
                 }
 
-                const { project_id, kanban_id, name, description, status, priority, start_date, end_date } = req.body;
+                const { project_id } = req.params;
+                console.log("create: ", project_id);
+                console.log("create: ", userData.id);
+                const { name, description, status, priority, start_date, end_date } = req.body;
 
-                // Kiểm tra xem người dùng có quyền trong dự án không
-                const isMember = await ProjectMembers.findOne({ project_id, user_id: userData.id });
-                if (!isMember && isMember.role !== "admin") {
-                    return res.status(403).json({ message: "You are not authorized to create tasks for this project" });
-                }
+                // const isMember = await ProjectMembers.findOne({
+                //     project_id: project_id,
+                //     user_id: userData.id
+                // });
+
+                // console.log(isMember);
+                // if (!isMember || isMember.role !== "admin") {
+                //     return res.status(403).json({ message: "You are not authorized to create tasks for this project" });
+                // }
 
                 // Tạo task mới
                 const newTask = await Task.create({
                     project_id,
-                    kanban_id,
                     created_by: userData.id,
                     name,
                     description,
@@ -69,13 +77,16 @@ const tasksController = {
                     return res.status(403).json({ message: "Invalid token" });
                 }
 
-                const { project_id } = req.query;
+                const { project_id } = req.params;  // Changed to params from query
+                console.log("get: ", project_id);
+                console.log("get: ", userData.id);
 
                 // Kiểm tra quyền trong dự án
-                const isMember = await ProjectMembers.findOne({ project_id, user_id: userData.id });
-                if (!isMember) {
-                    return res.status(403).json({ message: "You are not authorized to view tasks for this project" });
-                }
+                // const isMember = await ProjectMembers.findOne({ project_id: project_id });
+                // console.log(isMember);
+                // if (!isMember) {
+                //     return res.status(403).json({ message: "You are not authorized to view tasks for this project" });
+                // }
 
                 // Lấy danh sách các task
                 const tasks = await Task.find({ project_id });

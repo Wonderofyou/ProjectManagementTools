@@ -1,15 +1,18 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
-export default function AddNewProjectPage() {
+export default function AddNewTaskPage() {
     const navigate = useNavigate();
+    const { projectId } = useParams(); // Get project_id from URL parameters
+
     const [formData, setFormData] = useState({
         name: '',
         description: '',
         start_date: '',
         end_date: '',
         status: 'Pending',
+        priority: 'Low',
     });
 
     const handleChange = (e) => {
@@ -19,21 +22,24 @@ export default function AddNewProjectPage() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        axios.post('v1/task/create-task', formData).then(() => {
-            console.log(formData);
-            navigate('/');
-        }).catch(error => {
-            console.error("Error creating project:", error);
-        });
+        // Include projectId in the URL for the POST request
+        axios.post(`/v1/tasks/create-task/${projectId}`, formData)
+            .then(() => {
+                console.log(formData);
+                navigate(`/projects/${projectId}/tasks`);
+            })
+            .catch(error => {
+                console.error("Error creating task:", error);
+            });
     };
 
     return (
         <div className="max-w-full mx-auto mt-10">
-            <h1 className="text-2xl font-bold mb-4">Add New Project</h1>
+            <h1 className="text-2xl font-bold mb-4">Add New Task</h1>
             <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
                 <div className="flex gap-4 mb-4">
                     <div className="flex-1">
-                        <label className="block text-gray-700 text-sm font-bold mb-2">Project Name</label>
+                        <label className="block text-gray-700 text-sm font-bold mb-2">Task Name</label>
                         <input
                             type="text"
                             name="name"
@@ -89,12 +95,25 @@ export default function AddNewProjectPage() {
                         <option value="Completed">Completed</option>
                     </select>
                 </div>
+                <div className="mb-4">
+                    <label className="block text-gray-700 text-sm font-bold mb-2">Priority</label>
+                    <select
+                        name="priority"
+                        value={formData.priority}
+                        onChange={handleChange}
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
+                    >
+                        <option value="Low">Low</option>
+                        <option value="Medium">Medium</option>
+                        <option value="High">High</option>
+                    </select>
+                </div>
                 <div className="flex justify-center items-center">
                     <button
                         type="submit"
                         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                     >
-                        Create Project
+                        Create Task
                     </button>
                 </div>
             </form>

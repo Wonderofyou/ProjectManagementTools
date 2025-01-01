@@ -10,6 +10,7 @@ import { UserContextProvider } from "./UserContext";
 import ProfilePage from "./pages/ProfilePage.jsx";
 import AddNewProjectPage from "./pages/AddNewProjectPage.jsx";
 import TasksPage from "./pages/TasksPage.jsx";
+import AddNewTaskPage from "./pages/AddNewTaskPage.jsx";
 
 
 axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL;
@@ -25,8 +26,9 @@ function App() {
           <Route path="/account" element={<ProfilePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path='/projects' element={<ProjectsPage />} />
-          <Route path="/account/projects/new" element={<AddNewProjectPage />} />
-          <Route path="/account/projects/tasks" element={<TasksPage />} />
+          <Route path='/projects/new' element={<AddNewProjectPage />} />
+          <Route path="/projects/:projectId/tasks" element={<TasksPage />} />
+          <Route path="/projects/:projectId/tasks/new" element={<AddNewTaskPage />} />
         </Route>
         
 

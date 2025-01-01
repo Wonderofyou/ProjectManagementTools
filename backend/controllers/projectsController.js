@@ -91,7 +91,17 @@ const projectsController = {
                 }
 
                 // Lấy danh sách dự án
-                const projects = await ProjectMembers.find({ user_id: userData.id });
+                const projects = await ProjectMembers.find({
+                    user_id: userData.id
+                }).populate('project_id');
+
+
+                // if (projects.length > 0) {
+                //     // Các dự án sẽ được trả về với thông tin chi tiết của project
+                //     console.log(projects);
+                // } else {
+                //     console.log('No projects found for this user.');
+                // }
 
                 // Phản hồi
                 res.status(200).json({
