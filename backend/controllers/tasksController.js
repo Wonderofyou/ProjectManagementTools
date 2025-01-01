@@ -25,7 +25,7 @@ const tasksController = {
 
                 // Kiểm tra xem người dùng có quyền trong dự án không
                 const isMember = await ProjectMembers.findOne({ project_id, user_id: userData.id });
-                if (!isMember) {
+                if (!isMember && isMember.role !== "admin") {
                     return res.status(403).json({ message: "You are not authorized to create tasks for this project" });
                 }
 
