@@ -1,4 +1,10 @@
+const Project = require("../models/Project");
 const User = require("../models/User");
+const ProjectMembers = require("../models/ProjectMembers");
+const Invitation = require("../models/Invitations");
+const Notification = require("../models/Notifications");
+const UserNotification = require("../models/UserNotifications");
+const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 require('dotenv').config()
@@ -18,6 +24,177 @@ const userController = {
       });
     } else {
       res.json(null);
+    }
+  },
+
+  // mời người khác vòa dự án 
+  sendInvite: async (req, res) => {
+    try {
+      const { token } = req.cookies;
+
+      if (!token) {
+        return res.status(401).json({ message: "Authentication required" });
+      }
+
+      // Xác thực token
+      jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+        if (err) {
+          return res.status(403).json({ message: "Invalid token" });
+        }
+
+        const { projectId, email, content, role } = req.body; // Lấy projectId từ body
+
+        // Kiểm tra xem người dùng được mời có tồn tại không
+        const invitedUser = await User.findOne({ email: email });
+        if (!invitedUser) {
+          return res.status(404).json({ message: "User not found" });
+        }
+
+        // Kiểm tra xem người gửi lời mời có phải là admin của dự án không
+        const projectMember = await ProjectMembers.findOne({
+          project_id: projectId,
+          user_id: userData.id,
+        });
+
+        if (!projectMember || projectMember.role !== 'admin') {
+          return res.status(403).json({ message: "You must be an admin of the project to send invitations" });
+        }
+
+
+        // Tạo thông báo (Notification)
+        const newNotification = await Notification.create({
+          created_by: userData.id,
+          title: "Project Invitation",
+          content: content,
+          type: 1, // 1: Notification liên quan đến lời mời
+        });
+
+        // Liên kết thông báo với người dùng
+        const userNotification = await UserNotification.create({
+          user_id: invitedUser._id,
+          notification_id: newNotification._id,
+          read_status: false, // Đánh dấu chưa đọc
+        });
+
+        // Tạo lời mời (Invitation)
+        await Invitation.create({
+          project_id: projectId,
+          inviter_id: userData.id,
+          invitee_id: invitedUser._id,
+          role: role,
+        });
+        return res.status(201).json({
+          message: "Invitation sent successfully",
+        });
+      });
+    } catch (error) {
+      console.error("Error sending invitation:", error);
+      return res.status(500).json({ message: "Internal server error" });
+    }
+  },
+
+  getInvitations: async (req, res) => {
+    try {
+      const { token } = req.cookies;
+
+      if (!token) {
+        return res.status(401).json({ message: "Authentication required" });
+      }
+
+      // Xác thực token
+      jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+        if (err) {
+          return res.status(403).json({ message: "Invalid token" });
+        }
+
+        // Lấy danh sách lời mời của người dùng
+        const invitations = await Invitation.find({ invitee_id: userData.id })
+          .populate('project_id', 'name') // Lấy thông tin dự án (tên dự án)
+          .populate('inviter_id', 'name email'); // Lấy thông tin người gửi (tên và email)
+
+        return res.status(200).json({
+          message: "Invitations fetched successfully",
+          invitations,
+        });
+      });
+    } catch (error) {
+      console.error("Error fetching invitations:", error);
+      return res.status(500).json({ message: "Internal server error" });
+    }
+  },
+
+  //response invite
+  responseInvite: async (req, res) => {
+    try {
+      const { token } = req.cookies;
+
+      if (!token) {
+        return res.status(401).json({ message: "Authentication required" });
+      }
+
+      // Xác thực token
+      jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+        if (err) {
+          return res.status(403).json({ message: "Invalid token" });
+        }
+
+        const { invitationId, status } = req.body;
+
+        // Lấy thông tin lời mời
+        const invitation = await Invitation.findById(invitationId);
+        if (!invitation) {
+          return res.status(404).json({ message: "Invitation not found" });
+        }
+
+        // Kiểm tra người nhận có phải là người dùng hiện tại không
+        if (invitation.invitee_id != userData.id) {
+          return res.status(403).json({ message: "Unauthorized" });
+        }
+
+        const projectMember = await ProjectMembers.findOne({
+          project_id: invitation.project_id,
+          user_id: userData.id,
+        });
+        if (projectMember) {
+          return res.status(400).json({ message: "You are already a member of this project" });
+        }
+        if (invitation.status !== "pending") {
+          return res.status(400).json({ message: "Invitation has already been responded" });
+        }
+        invitation.status = status;
+
+        //save invitation
+        await invitation.save();
+        if (status === "accepted") {
+          // Thêm người dùng vào ProjectMembers
+          const newProjectMember = new ProjectMembers({
+            project_id: invitation.project_id,
+            user_id: userData.id,
+            role: invitation.role,
+          });
+          await newProjectMember.save();
+        }
+
+        //tạo thông báo :
+        const notification = await Notification.create({
+          created_by: userData.id,
+          title: "Invitation Response",
+          content: `Your invitation to project ${invitation.project_id.name} has been ${status}`,
+          type: 1,
+        });
+
+        // Tạo thông báo cho người gửi
+        const userNotification = new UserNotification({
+          user_id: invitation.inviter_id,
+          notification_id: notification._id,
+        });
+        await userNotification.save();
+
+        return res.status(200).json({ message: "Response sent successfully" });
+      });
+    } catch (error) {
+      console.error("Error responding to invitation:", error);
+      return res.status(500).json({ message: "Internal server error" });
     }
   },
 }
