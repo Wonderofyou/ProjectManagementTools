@@ -278,6 +278,36 @@ const userController = {
       return res.status(500).json({ message: "Internal server error" });
     }
   },
+  deleteNotification: async (req, res) => {
+    try {
+      const { token } = req.cookies;
+
+      if (!token) {
+        return res.status(401).json({ message: "Authentication required" });
+      }
+
+      // Xác thực token
+      jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+        if (err) {
+          return res.status(403).json({ message: "Invalid token" });
+        }
+
+        const { notificationId } = req.params; // Lấy notificationId từ params
+        if (!notificationId) {
+          return res.status(400).json({ message: "Notification ID is required" });
+        }
+
+        // Xóa thông báo
+        await UserNotification.deleteOne({ _id: notificationId, user_id: userData.id });
+        await Notification.deleteOne({ _id: notificationId });
+
+        return res.status(200).json({ message: "Notification deleted successfully" });
+      });
+    } catch (error) {
+      console.error("Error deleting notification:", error);
+      return res.status(500).json({ message: "Internal server error" });
+    }
+  },
 
 }
 
