@@ -3,14 +3,16 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 export default function ProjectsPage() {
+    // fetch project from api
     const [projects, setProjects] = useState([]);
-
-    // Fetch projects from API
     useEffect(() => {
-        axios.get('v1/projects/projects').then(response => {
-            setProjects(response.data);
+        axios.get('v1/projects/get-projects').then(response => {
+            setProjects(response.data.projects);
+        }).catch(error => {
+            console.error("Error fetching projects:", error);
         });
     }, []);
+
 
     return (
         <div>

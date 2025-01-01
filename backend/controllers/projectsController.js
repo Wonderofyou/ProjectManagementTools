@@ -139,7 +139,33 @@ const projectsController = {
     },
 
     // Lấy danh sách dự án
+    getProjects: async (req, res) => {
+        try {
+            const { token } = req.cookies;
 
+            if (!token) {
+                return res.status(401).json({ message: 'Authentication required' });
+            }
+
+            // Xác thực token
+            jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+                if (err) {
+                    return res.status(403).json({ message: 'Invalid token' });
+                }
+
+                // Lấy danh sách dự án
+                const projects = await ProjectMembers.find({ user_id: userData.id });
+
+                // Phản hồi
+                res.status(200).json({
+                    projects: projects,
+                });
+            });
+        } catch (error) {
+            console.error('Error getting projects:', error);
+            res.status(500).json({ message: 'Internal server error' });
+        }
+    },
 
 
 };
