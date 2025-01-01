@@ -9,6 +9,11 @@ const InvitationSchema = new Schema(
             ref: 'Project',
             required: true
         }, // Dự án liên quan đến lời mời
+        role: {
+            type: String,
+            role: ['admin', 'member'],
+            default: 'member'
+        },
         inviter_id:
         {
             type: Schema.Types.ObjectId,
@@ -35,7 +40,7 @@ const InvitationSchema = new Schema(
         {
             type: Date,
             default: Date.now
-        }, // Thời gian cập nhật trạng thái
+        }, // Thời gian cập nhật trạng thái lời mời
     });
 
 const Invitation = mongoose.model('Invitation', InvitationSchema);

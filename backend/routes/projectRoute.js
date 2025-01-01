@@ -5,10 +5,5 @@ const projectsController = require('../controllers/projectsController');
 router.post('/create-project', projectsController.createProject);
 router.get('/get-projects', projectsController.getProjects);
 
-// Route này mời user vào dự án với userid là tham số
-router.post("/invite", projectsController.sendInvite);
-
-router.get("/invitations", projectsController.getInvitations);
-
 
 module.exports = router;
