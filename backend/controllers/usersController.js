@@ -235,6 +235,50 @@ const userController = {
       return res.status(500).json({ message: "Internal server error" });
     }
   },
+  updateNotificationStatus: async (req, res) => {
+    try {
+      const { token } = req.cookies;
+
+      if (!token) {
+        return res.status(401).json({ message: "Authentication required" });
+      }
+
+      // Xác thực token
+      jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+        if (err) {
+          return res.status(403).json({ message: "Invalid token" });
+        }
+
+        const { notificationId } = req.params; // Lấy notificationId từ params
+        if (!notificationId) {
+          return res.status(400).json({ message: "Notification ID is required" });
+        }
+
+        // Tìm thông báo theo ID và user_id
+        const userNotification = await UserNotification.findOne({
+          _id: notificationId,
+          user_id: userData.id,
+        });
+
+        if (!userNotification) {
+          return res.status(404).json({ message: "Notification not found" });
+        }
+
+        // Đảo trạng thái đọc
+        userNotification.read_status = !userNotification.read_status;
+        await userNotification.save();
+
+        return res.status(200).json({
+          message: "Notification status updated successfully",
+          read_status: userNotification.read_status,
+        });
+      });
+    } catch (error) {
+      console.error("Error updating notification status:", error);
+      return res.status(500).json({ message: "Internal server error" });
+    }
+  },
+
 }
 
 module.exports = userController;
