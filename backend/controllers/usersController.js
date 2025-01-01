@@ -174,12 +174,14 @@ const userController = {
           });
           await newProjectMember.save();
         }
+        //lấy tên của project
+        const project = await Project.findById(invitation.project_id);
 
         //tạo thông báo :
         const notification = await Notification.create({
           created_by: userData.id,
           title: "Invitation Response",
-          content: `Your invitation to project ${invitation.project_id.name} has been ${status}`,
+          content: `Your invitation to project ${project.name} has been ${status}`,
           type: 1,
         });
 
