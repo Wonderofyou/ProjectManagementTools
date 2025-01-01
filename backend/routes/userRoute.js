@@ -7,6 +7,7 @@ router.post('/edit-profile', userController.editProfile);
 router.post("/invite", userController.sendInvite);
 router.get("/invitations", userController.getInvitations);
 router.post("/response-invitation", userController.responseInvite);
+router.get("/notifications", userController.getNotifications);
 
 
 module.exports = router;
