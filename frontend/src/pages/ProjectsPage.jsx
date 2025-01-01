@@ -31,7 +31,7 @@ export default function ProjectsPage() {
             <h1 className="text-2xl font-bold mb-4">Projects</h1>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 mt-4">
                 {currentProjects.length > 0 ? currentProjects.map(project => (
-                    <Link key={project._id} to={'/account/projects/' + project._id + '/kanban'} className="flex cursor-pointer gap-4 bg-gray-100 p-4 rounded-2xl">
+                    <Link key={project._id} to={'/account/projects/tasks'} className="flex cursor-pointer gap-4 bg-gray-100 p-4 rounded-2xl">
                         <div className="w-full">
                             <h2 className="text-xl">{project.name}</h2>
                             <p className="text-sm mt-2">{project.description}</p>
