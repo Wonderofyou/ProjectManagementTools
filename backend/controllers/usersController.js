@@ -172,7 +172,8 @@ const userController = {
             user_id: userData.id,
             role: invitation.role,
           });
-          await newProjectMember.save();
+          await newProjectMember.save()
+          console.log(newProjectMember);
         }
         //lấy tên của project
         const project = await Project.findById(invitation.project_id);
