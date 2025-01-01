@@ -1,110 +1,100 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useProjects } from "./ProjectContext";
+import axios from "axios";
 
 export default function AddNewProjectPage() {
-    const { addProject } = useProjects(); // Lấy hàm thêm dự án từ context
     const navigate = useNavigate();
-
     const [formData, setFormData] = useState({
-        name: "",
-        description: "",
-        start_date: "",
-        end_date: "",
-        status: "Pending",
-        team: [],
+        name: '',
+        description: '',
+        start_date: '',
+        end_date: '',
+        status: 'Pending',
     });
 
-    const navigate = useNavigate();
-
-    const handleInputChange = (e) => {
+    const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Call API to save the project
-        console.log("Submitted Data: ", formData);
-        navigate("/account/projects");
+        axios.post('v1/projects/create-project', formData).then(() => {
+            console.log(formData);
+            navigate('/projects');
+        }).catch(error => {
+            console.error("Error creating project:", error);
+        });
     };
 
     return (
-        <div className="max-w-4xl mx-auto mt-6 p-4 bg-gray-50 rounded shadow">
-            <h2 className="text-2xl font-bold mb-4">Create New Project</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                    <label className="block mb-2">Project Title</label>
-                    <input
-                        type="text"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleInputChange}
-                        className="w-full p-2 border rounded"
-                        required
-                    />
-                </div>
-                <div>
-                    <label className="block mb-2">Project Description</label>
-                    <textarea
-                        name="description"
-                        value={formData.description}
-                        onChange={handleInputChange}
-                        className="w-full p-2 border rounded"
-                        rows="3"
-                        required
-                    />
-                </div>
-                <div className="flex gap-4">
-                    <div>
-                        <label className="block mb-2">Start Date</label>
+        <div className="max-w-full mx-auto mt-10">
+            <h1 className="text-2xl font-bold mb-4">Add New Project</h1>
+            <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+                <div className="flex gap-4 mb-4">
+                    <div className="flex-1">
+                        <label className="block text-gray-700 text-sm font-bold mb-2">Project Name</label>
+                        <input
+                            type="text"
+                            name="name"
+                            value={formData.name}
+                            onChange={handleChange}
+                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
+                            required
+                        />
+                    </div>
+                    <div className="flex-1">
+                        <label className="block text-gray-700 text-sm font-bold mb-2">Start Date</label>
                         <input
                             type="date"
                             name="start_date"
                             value={formData.start_date}
-                            onChange={handleInputChange}
-                            className="w-full p-2 border rounded"
+                            onChange={handleChange}
+                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
                             required
                         />
                     </div>
-                    <div>
-                        <label className="block mb-2">End Date</label>
+                    <div className="flex-1">
+                        <label className="block text-gray-700 text-sm font-bold mb-2">End Date</label>
                         <input
                             type="date"
                             name="end_date"
                             value={formData.end_date}
-                            onChange={handleInputChange}
-                            className="w-full p-2 border rounded"
+                            onChange={handleChange}
+                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
                             required
                         />
                     </div>
                 </div>
-                <div>
-                    <label className="block mb-2">Team Members</label>
+                <div className="mb-4">
+                    <label className="block text-gray-700 text-sm font-bold mb-2">Description</label>
+                    <textarea
+                        name="description"
+                        value={formData.description}
+                        onChange={handleChange}
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
+                        required
+                    />
+                </div>
+                <div className="mb-4">
+                    <label className="block text-gray-700 text-sm font-bold mb-2">Status</label>
                     <select
-                        name="team"
-                        value={formData.team}
-                        onChange={(e) =>
-                            setFormData({
-                                ...formData,
-                                team: [...formData.team, e.target.value],
-                            })
-                        }
-                        className="w-full p-2 border rounded"
+                        name="status"
+                        value={formData.status}
+                        onChange={handleChange}
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
                     >
-                        <option value="">Select Role</option>
-                        <option value="Hieu">Hieu (Team Lead)</option>
-                        <option value="Manh">Manh (Frontend)</option>
-                        <option value="Lam">Lam (Backend)</option>
-                        <option value="Loi">Loi (PM)</option>
+                        <option value="Pending">Pending</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Completed">Completed</option>
                     </select>
                 </div>
-                <div className="text-right">
+                <div className="flex justify-center items-center">
                     <button
                         type="submit"
-                        className="bg-blue-600 text-white py-2 px-6 rounded"
+                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                     >
-                        Create
+                        Create Project
                     </button>
                 </div>
             </form>
