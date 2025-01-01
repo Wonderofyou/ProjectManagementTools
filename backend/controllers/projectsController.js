@@ -166,6 +166,36 @@ const projectsController = {
             res.status(500).json({ message: 'Internal server error' });
         }
     },
+    getInvitations: async (req, res) => {
+        try {
+            const { token } = req.cookies;
+
+            if (!token) {
+                return res.status(401).json({ message: "Authentication required" });
+            }
+
+            // Xác thực token
+            jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+                if (err) {
+                    return res.status(403).json({ message: "Invalid token" });
+                }
+
+                // Lấy danh sách lời mời của người dùng
+                const invitations = await Invitation.find({ invitee_id: userData.id })
+                    .populate('project_id', 'name') // Lấy thông tin dự án (tên dự án)
+                    .populate('inviter_id', 'name email'); // Lấy thông tin người gửi (tên và email)
+
+                return res.status(200).json({
+                    message: "Invitations fetched successfully",
+                    invitations,
+                });
+            });
+        } catch (error) {
+            console.error("Error fetching invitations:", error);
+            return res.status(500).json({ message: "Internal server error" });
+        }
+    }
+
 
 
 };

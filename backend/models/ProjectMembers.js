@@ -5,12 +5,12 @@ const ProjectMembersSchema = new mongoose.Schema(
     {
         project_id: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'project', // Tham chiếu tới Project model
+            ref: 'Project', // Tham chiếu tới Project model
             required: true, // Bắt buộc phải có project_id
         },
         user_id: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'user', // Tham chiếu tới User model
+            ref: 'User', // Tham chiếu tới User model
             required: true, // Bắt buộc phải có user_id
         },
         role: {

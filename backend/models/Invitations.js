@@ -12,13 +12,13 @@ const InvitationSchema = new Schema(
         inviter_id:
         {
             type: Schema.Types.ObjectId,
-            ref: 'user',
+            ref: 'User',
             required: true
         }, // Người gửi lời mời
         invitee_id:
         {
             type: Schema.Types.ObjectId,
-            ref: 'user',
+            ref: 'User',
             required: true
         }, // Người nhận lời mời
         status: {

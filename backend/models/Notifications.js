@@ -5,7 +5,7 @@ const NotificationSchema = new Schema({
     created_by:
     {
         type: Schema.Types.ObjectId,
-        ref: 'user', required: true
+        ref: 'User', required: true
     }, // Người tạo thông báo
     title:
     {
