@@ -197,6 +197,42 @@ const userController = {
       return res.status(500).json({ message: "Internal server error" });
     }
   },
+  getNotifications: async (req, res) => {
+    try {
+      const { token } = req.cookies;
+
+      if (!token) {
+        return res.status(401).json({ message: "Authentication required" });
+      }
+
+      // Xác thực token
+      jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+        if (err) {
+          return res.status(403).json({ message: "Invalid token" });
+        }
+
+        const { status } = req.query;
+
+        // Tạo điều kiện truy vấn linh hoạt
+        const query = { user_id: userData.id };
+        if (status === "read") query.read_status = true;
+        if (status === "unread") query.read_status = false;
+
+        // Truy vấn thông báo
+        const notifications = await UserNotification.find(query)
+          .populate("notification_id")
+          .sort({ createdAt: -1 });
+
+        return res.status(200).json({
+          message: "Notifications fetched successfully",
+          notifications,
+        });
+      });
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+      return res.status(500).json({ message: "Internal server error" });
+    }
+  },
 }
 
 module.exports = userController;
