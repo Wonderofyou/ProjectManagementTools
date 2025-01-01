@@ -9,6 +9,7 @@ router.get("/invitations", userController.getInvitations);
 router.post("/response-invitation", userController.responseInvite);
 router.get("/notifications", userController.getNotifications);
 router.post('/update-status/:notificationId', userController.updateNotificationStatus);
+router.delete('/delete-notification/:notificationId', userController.deleteNotification);
 
 
 
