@@ -6,10 +6,6 @@ const TaskSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Project',
         },
-        kanban_id: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Kanban',
-        },
         created_by: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User',
@@ -51,6 +47,6 @@ const TaskSchema = new mongoose.Schema(
     }
 );
 
-const Task = mongoose.model('Project', TaskSchema); // Sửa lại tên model để không bị trùng lặp
+const Task = mongoose.model('Task', TaskSchema); // Sửa lại tên model để không bị trùng lặp
 
 module.exports = Task;
