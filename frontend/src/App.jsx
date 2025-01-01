@@ -21,13 +21,15 @@ function App() {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<IndexPage />} />
-          <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/account" element={<ProfilePage />} />
+          <Route path="/login" element={<LoginPage />} />
           <Route path='/projects' element={<ProjectsPage />} />
           <Route path="/account/projects/new" element={<AddNewProjectPage />} />
           <Route path="/account/projects/tasks" element={<TasksPage />} />
         </Route>
+        
+
       </Routes>
     </UserContextProvider>
   )
