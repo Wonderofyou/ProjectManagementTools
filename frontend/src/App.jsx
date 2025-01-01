@@ -9,6 +9,8 @@ import axios from "axios";
 import { UserContextProvider } from "./UserContext";
 import ProfilePage from "./pages/ProfilePage.jsx";
 import AddNewProjectPage from "./pages/AddNewProjectPage.jsx";
+import KanbanBoardOfTasksPage from './pages/KanbanBoardOfTasksPage.jsx';
+
 
 
 axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL;
@@ -25,6 +27,7 @@ function App() {
           <Route path="/account" element={<ProfilePage />} />
           <Route path='/projects' element={<ProjectsPage />} />
           <Route path="/account/projects/new" element={<AddNewProjectPage />} />
+          <Route path="/account/projects/kanban" element={<KanbanBoardOfTasksPage />} />
         </Route>
       </Routes>
     </UserContextProvider>
