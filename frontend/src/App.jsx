@@ -22,6 +22,7 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/account" element={<ProfilePage />} />
         </Route>
+
       </Routes>
     </UserContextProvider>
   )
