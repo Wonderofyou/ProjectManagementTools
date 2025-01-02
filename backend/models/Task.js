@@ -20,7 +20,7 @@ const TaskSchema = new mongoose.Schema(
         },
         status: {
             type: String,
-            enum: ["Pending", "On Progress", "Finish"], // Thêm enum để giới hạn giá trị
+            enum: ["Pending", "In Progress", "Completed"], // Thêm enum để giới hạn giá trị
             default: "Pending"
         },
         priority: {
