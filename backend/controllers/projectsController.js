@@ -32,15 +32,17 @@ const projectsController = {
                     return res.status(404).json({ message: 'User not found' });
                 }
 
-                const { name, description, start_date, end_date } = req.body;
+                console.log(Object.keys(req.body));
+                const { name, description, start_date, end_date, status } = req.body;
 
                 let newProject;
                 try {
                     newProject = await Project.create({
                         name: name,
-                        description,
+                        description: description,
                         start_date: start_date || Date.now(),
                         end_date: end_date || Date.now() + 10 * 24 * 60 * 60 * 1000, // Mặc định cộng 10 ngày
+                        status: status,
                         owner_id: user._id,
                     });
                 } catch (projectError) {
