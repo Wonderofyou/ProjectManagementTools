@@ -132,7 +132,7 @@ export default function Label() {
                 </defs>
             </svg>
 
-            <span className="font-bold text-xl">PMTools</span>
+            
         </Link>
     )
 }
