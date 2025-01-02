@@ -20,7 +20,7 @@ const ProjectSchema = new mongoose.Schema(
         },
         status: {
             type: String,
-            enum: ["Pending", "On Progress", "Finish"], 
+            enum: ["Pending", "In Progress", "Completed"],
         },
         owner_id: {
             type: mongoose.Schema.Types.ObjectId,
@@ -37,6 +37,6 @@ const ProjectSchema = new mongoose.Schema(
     }
 );
 
-const Project = mongoose.model('Project', ProjectSchema); 
+const Project = mongoose.model('Project', ProjectSchema);
 
 module.exports = Project;
