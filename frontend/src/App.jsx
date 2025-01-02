@@ -11,6 +11,7 @@ import ProfilePage from "./pages/ProfilePage.jsx";
 import InvitationPage from './pages/InvitationPage.jsx';
 import TasksPage from "./pages/TasksPage.jsx";
 import AddNewTaskPage from "./pages/AddNewTaskPage.jsx";
+import AddNewProjectPage from "./pages/AddNewProjectPage.jsx";
 
 
 
@@ -33,7 +34,7 @@ function App() {
           <Route path="/projects/:projectId/tasks" element={<TasksPage />} />
           <Route path="/projects/:projectId/tasks/new" element={<AddNewTaskPage />} />
         </Route>
-        
+
 
       </Routes>
     </UserContextProvider>
