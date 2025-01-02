@@ -1,13 +1,8 @@
-//Tham khảo https://github.com/Sridhar-C-25/react-tailwind-sidebar/blob/main/src/pages/Home.jsx
 import React, { useState } from "react";
-import { HiMenuAlt3, HiOutlineDocumentReport } from "react-icons/hi";
+import { HiMenuAlt3 } from "react-icons/hi";
 import { MdOutlineDashboard } from "react-icons/md";
-import { RiSettings4Line } from "react-icons/ri";
-import { TbReportAnalytics } from "react-icons/tb";
-import { AiOutlineTeam, AiOutlineHeart } from "react-icons/ai";
-import { GoProject } from "react-icons/go";
-
-import { FiMessageSquare, FiFolder, FiShoppingCart } from "react-icons/fi";
+import { AiOutlineTeam, AiOutlineBell } from "react-icons/ai";
+import { FiMessageSquare } from "react-icons/fi";
 import { Link } from "react-router-dom";
 
 const Sidebar = () => {
@@ -15,16 +10,34 @@ const Sidebar = () => {
         { name: "dashboard", link: "/", icon: MdOutlineDashboard },
         { name: "team", link: "/teams", icon: AiOutlineTeam },
         { name: "messages", link: "/messages", icon: FiMessageSquare },
-        { name: "report", link: "/report", icon: HiOutlineDocumentReport },
-        { name: "File Manager", link: "/file", icon: FiFolder },
-        { name: "Project", link: "/projects", icon: GoProject },
-        { name: "Setting", link: "/setting", icon: RiSettings4Line },
     ];
+
     const [open, setOpen] = useState(true);
+    const [notifications, setNotifications] = useState([
+        { id: 1, text: "New message from John", read: false },
+        { id: 2, text: "Project deadline extended", read: false },
+        { id: 3, text: "Team meeting at 3 PM", read: true },
+    ]);
+    const [showNotificationDropdown, setShowNotificationDropdown] = useState(false);
+
+    // Kiểm tra xem có thông báo chưa đọc không
+    const hasUnreadNotifications = notifications.some((n) => !n.read);
+
+    const handleNotificationClick = () => {
+        setShowNotificationDropdown(!showNotificationDropdown);
+    };
+
+    const markAsRead = (id) => {
+        setNotifications((prevNotifications) =>
+            prevNotifications.map((n) =>
+                n.id === id ? { ...n, read: true } : n
+            )
+        );
+    };
+
     return (
         <div
-            className={`bg-[#0e0e0e] min-h-screen ${open ? "w-72" : "w-16"
-                } duration-500 text-gray-100 px-4`}
+            className={`bg-[#0e0e0e] min-h-screen ${open ? "w-72" : "w-16"} duration-500 text-gray-100 px-4`}
         >
             <div className="py-3 flex justify-end">
                 <HiMenuAlt3
@@ -34,31 +47,51 @@ const Sidebar = () => {
                 />
             </div>
             <div className="mt-4 flex flex-col gap-4 relative">
-                {menus?.map((menu, i) => (
+                {menus.map((menu, i) => (
                     <Link
                         to={menu?.link}
                         key={i}
-                        className={` ${menu?.margin && "mt-5"
-                            } group flex items-center text-sm  gap-3.5 font-medium p-2 hover:bg-gray-800 rounded-md`}
+                        className={`group flex items-center text-sm gap-3.5 font-medium p-2 hover:bg-gray-800 rounded-md`}
                     >
                         <div>{React.createElement(menu?.icon, { size: "20" })}</div>
                         <h2
-                            style={{
-                                transitionDelay: `${i + 3}00ms`,
-                            }}
-                            className={`whitespace-pre duration-500 ${!open && "opacity-0 translate-x-28 overflow-hidden"
-                                }`}
+                            className={`whitespace-pre duration-500 ${!open && "opacity-0 translate-x-28 overflow-hidden"}`}
                         >
-                            {menu?.name}
-                        </h2>
-                        <h2
-                            className={`${open && "hidden"
-                                } absolute left-48 bg-white font-semibold whitespace-pre text-gray-900 rounded-md drop-shadow-lg px-0 py-0 w-0 overflow-hidden group-hover:px-2 group-hover:py-1 group-hover:left-14 group-hover:duration-300 group-hover:w-fit  `}
-                        >
-                            {menu?.name}
+                            {menu.name}
                         </h2>
                     </Link>
                 ))}
+
+                {/* Notification Icon */}
+                <div className="mt-auto relative">
+                    <div
+                        className="flex items-center justify-center p-2 cursor-pointer relative hover:bg-gray-800 rounded-md"
+                        onClick={handleNotificationClick}
+                    >
+                        <AiOutlineBell size={24} />
+                        {hasUnreadNotifications && (
+                            <span className="absolute top-1 right-1 w-3 h-3 bg-red-500 rounded-full"></span>
+                        )}
+                    </div>
+                    {showNotificationDropdown && (
+                        <div
+                            className="absolute top-0 left-full ml-6 w-60 bg-gray-800 text-gray-100 rounded-lg shadow-lg p-4 z-10"
+                        >
+                            <h3 className="text-lg font-semibold mb-2">Notifications</h3>
+                            <ul className="space-y-2">
+                                {notifications.map((notification) => (
+                                    <li
+                                        key={notification.id}
+                                        className={`p-2 rounded cursor-pointer ${notification.read ? "bg-gray-700" : "bg-gray-600"}`}
+                                        onClick={() => markAsRead(notification.id)}
+                                    >
+                                        {notification.text}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );
