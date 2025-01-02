@@ -44,8 +44,8 @@ const tasksController = {
                     created_by: userData.id,
                     name,
                     description,
-                    status: status || "Pending",
-                    priority: priority || "Medium",
+                    status: status,
+                    priority: priority,
                     start_date: start_date || Date.now(),
                     end_date: end_date || new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
                 });
