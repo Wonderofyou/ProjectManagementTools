@@ -20,8 +20,7 @@ const ProjectSchema = new mongoose.Schema(
         },
         status: {
             type: String,
-            enum: ["Pending", "On Progress", "Finish"], // Thêm enum để giới hạn giá trị
-            default: "Pending"
+            enum: ["Pending", "On Progress", "Finish"], 
         },
         owner_id: {
             type: mongoose.Schema.Types.ObjectId,
@@ -38,6 +37,6 @@ const ProjectSchema = new mongoose.Schema(
     }
 );
 
-const Project = mongoose.model('Project', ProjectSchema); // Sửa lại tên model để không bị trùng lặp
+const Project = mongoose.model('Project', ProjectSchema); 
 
 module.exports = Project;
