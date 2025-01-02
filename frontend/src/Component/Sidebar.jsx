@@ -5,6 +5,7 @@ import { MdOutlineDashboard } from "react-icons/md";
 import { RiSettings4Line } from "react-icons/ri";
 import { AiOutlineTeam, AiOutlineBell } from "react-icons/ai";
 import { FiMessageSquare, FiFolder } from "react-icons/fi";
+import { GoProject } from "react-icons/go";
 import { Link } from "react-router-dom";
 
 const Sidebar = () => {
@@ -14,6 +15,7 @@ const Sidebar = () => {
         { name: "messages", link: "/messages", icon: FiMessageSquare },
         { name: "report", link: "/report", icon: HiOutlineDocumentReport },
         { name: "File Manager", link: "/file", icon: FiFolder },
+        { name: "Project", link: "/projects", icon: GoProject },
         { name: "Setting", link: "/setting", icon: RiSettings4Line },
         {
             name: "Notifications",
