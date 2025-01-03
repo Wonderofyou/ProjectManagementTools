@@ -7,6 +7,8 @@ export default function TasksPage() {
     const [tasks, setTasks] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [tasksPerPage] = useState(6);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [taskToDelete, setTaskToDelete] = useState(null);
 
     useEffect(() => {
         if (projectId) {
@@ -46,14 +48,12 @@ export default function TasksPage() {
         }
     };
 
-    // Hàm để tính số ngày từ khi tạo task
     const getDaysFromCreation = (createdAt) => {
         const diffTime = Math.abs(new Date() - new Date(createdAt));
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         return diffDays;
     };
 
-    // Format time remaining
     const formatTimeRemaining = (endDate) => {
         const now = new Date();
         const end = new Date(endDate);
@@ -64,20 +64,31 @@ export default function TasksPage() {
         return `${days.toString().padStart(2, '0')}:${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
     };
 
+    const handleDeleteClick = (e, task) => {
+        e.preventDefault();
+        setTaskToDelete(task);
+        setShowDeleteModal(true);
+    };
+
+    const handleConfirmDelete = () => {
+        console.log("Deleting task:", taskToDelete);
+        setShowDeleteModal(false);
+        setTaskToDelete(null);
+    };
+
     const indexOfLastTask = currentPage * tasksPerPage;
     const indexOfFirstTask = indexOfLastTask - tasksPerPage;
     const currentTasks = tasks.slice(indexOfFirstTask, indexOfLastTask);
     const totalPages = Math.ceil(tasks.length / tasksPerPage);
 
     return (
-        <div className="p-8 bg-blue-100 min-h-screen">
+        <div className="p-8 bg-blue-100 min-h-screen relative">
             <h1 className="text-3xl font-bold mb-8">Tasks</h1>
             
             <div className="flex flex-col space-y-3">
                 {currentTasks.length > 0 ? currentTasks.map(task => (
-                    <div key={task._id} className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                    <div key={task._id} className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow relative">
                         <div className="flex items-center justify-between">
-                            {/* Left side */}
                             <div className="flex items-center space-x-4">
                                 <div className="text-gray-400">
                                     <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -93,7 +104,6 @@ export default function TasksPage() {
                                 </div>
                             </div>
 
-                            {/* Center */}
                             <div className="flex items-center space-x-2">
                                 <span className={`px-3 py-1 rounded-full text-sm ${getStatusColor(task.status)}`}>
                                     {task.status}
@@ -103,7 +113,6 @@ export default function TasksPage() {
                                 </span>
                             </div>
 
-                            {/* Right side */}
                             <div className="flex items-center space-x-4">
                                 <div className="bg-gray-100 px-4 py-1 rounded-full text-gray-600">
                                     <span className="flex items-center space-x-1">
@@ -113,29 +122,59 @@ export default function TasksPage() {
                                         <span>{formatTimeRemaining(task.end_date)}</span>
                                     </span>
                                 </div>
-
-                                {/* Action buttons */}
-                                <div className="flex items-center space-x-2">
-                                    <button className="p-1 hover:bg-gray-100 rounded">
-                                        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7" />
-                                        </svg>
-                                    </button>
-                                    <button className="p-1 hover:bg-gray-100 rounded">
-                                        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                                        </svg>
-                                    </button>
-                                </div>
                             </div>
                         </div>
+
+                        <button 
+                            onClick={(e) => handleDeleteClick(e, task)}
+                            className="absolute bottom-1 right-3 p-2 text-gray-500 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"
+                        >
+                            <svg 
+                                xmlns="http://www.w3.org/2000/svg" 
+                                className="h-5 w-5" 
+                                fill="none" 
+                                viewBox="0 0 24 24" 
+                                stroke="currentColor"
+                            >
+                                <path 
+                                    strokeLinecap="round" 
+                                    strokeLinejoin="round" 
+                                    strokeWidth={2} 
+                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" 
+                                />
+                            </svg>
+                        </button>
                     </div>
                 )) : (
                     <p className="text-center text-gray-500">No tasks found. Create a new one below.</p>
                 )}
             </div>
 
-            {/* Pagination */}
+            {showDeleteModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg p-6 w-96">
+                        <h3 className="text-lg font-semibold mb-4">Confirm Delete</h3>
+                        <p className="text-gray-600 mb-6">
+                            Are you sure you want to delete this task? This action cannot be undone.
+                        </p>
+                        <div className="flex justify-end space-x-3">
+                            <button
+                                onClick={() => setShowDeleteModal(false)}
+                                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleConfirmDelete}
+                                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+                            >
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <div className="flex justify-center mt-8 gap-2">
                 <button 
                     onClick={() => currentPage > 1 && setCurrentPage(currentPage - 1)}
@@ -154,7 +193,6 @@ export default function TasksPage() {
                 </button>
             </div>
 
-            {/* Add new task button */}
             <div className="text-center mt-8">
                 <Link 
                     to={`/projects/${projectId}/tasks/new`}
