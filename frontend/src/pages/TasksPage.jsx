@@ -4,6 +4,7 @@ import axios from "axios";
 
 export default function TasksPage() {
     const { projectId } = useParams();
+    console.log("Project ID:", projectId);
     const [tasks, setTasks] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [tasksPerPage] = useState(6);
@@ -84,7 +85,7 @@ export default function TasksPage() {
     return (
         <div className="p-8 bg-blue-100 min-h-screen relative">
             <h1 className="text-3xl font-bold mb-8">Tasks</h1>
-            
+
             <div className="flex flex-col space-y-3">
                 {currentTasks.length > 0 ? currentTasks.map(task => (
                     <div key={task._id} className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow relative">
@@ -125,22 +126,22 @@ export default function TasksPage() {
                             </div>
                         </div>
 
-                        <button 
+                        <button
                             onClick={(e) => handleDeleteClick(e, task)}
                             className="absolute bottom-1 right-3 p-2 text-gray-500 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"
                         >
-                            <svg 
-                                xmlns="http://www.w3.org/2000/svg" 
-                                className="h-5 w-5" 
-                                fill="none" 
-                                viewBox="0 0 24 24" 
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-5 w-5"
+                                fill="none"
+                                viewBox="0 0 24 24"
                                 stroke="currentColor"
                             >
-                                <path 
-                                    strokeLinecap="round" 
-                                    strokeLinejoin="round" 
-                                    strokeWidth={2} 
-                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" 
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                                 />
                             </svg>
                         </button>
@@ -176,7 +177,7 @@ export default function TasksPage() {
             )}
 
             <div className="flex justify-center mt-8 gap-2">
-                <button 
+                <button
                     onClick={() => currentPage > 1 && setCurrentPage(currentPage - 1)}
                     className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
                     disabled={currentPage === 1}
@@ -184,7 +185,7 @@ export default function TasksPage() {
                     Previous
                 </button>
                 <span className="px-4 py-2">Page {currentPage} of {totalPages}</span>
-                <button 
+                <button
                     onClick={() => currentPage < totalPages && setCurrentPage(currentPage + 1)}
                     className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
                     disabled={currentPage === totalPages}
@@ -194,7 +195,7 @@ export default function TasksPage() {
             </div>
 
             <div className="text-center mt-8">
-                <Link 
+                <Link
                     to={`/projects/${projectId}/tasks/new`}
                     className="inline-flex items-center gap-2 px-6 py-2 bg-black text-white rounded-full hover:bg-gray-800"
                 >
