@@ -4,7 +4,7 @@ import { Outlet, useLocation } from "react-router-dom";
 export default function Layout() {
   const location = useLocation();
   const pathParts = location.pathname.split('/').filter(part => part !== '');
-  console.log(pathParts);
+  //console.log(pathParts);
 
   // Kiểm tra nếu phần đầu của đường dẫn là 'account'
   const isCenter = pathParts.length > 0;
