@@ -4,6 +4,7 @@ import axios from "axios";
 
 export default function TasksPage() {
     const { projectId } = useParams();
+    console.log("Project ID:", projectId);
     const [tasks, setTasks] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [tasksPerPage] = useState(6);
@@ -84,7 +85,6 @@ export default function TasksPage() {
     return (
         <div className="p-8 bg-blue-100 min-h-screen relative">
             <h1 className="text-3xl font-bold mb-8">Tasks</h1>
-            
             <div className="flex flex-col space-y-3">
                 {currentTasks.length > 0 ? currentTasks.map(task => (
                     <div key={task._id} className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow relative">
@@ -176,7 +176,8 @@ export default function TasksPage() {
             )}
 
             <div className="flex justify-center mt-8 gap-2">
-                <button 
+
+                <button
                     onClick={() => currentPage > 1 && setCurrentPage(currentPage - 1)}
                     className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
                     disabled={currentPage === 1}
@@ -194,7 +195,7 @@ export default function TasksPage() {
             </div>
 
             <div className="text-center mt-8">
-                <Link 
+                <Link
                     to={`/projects/${projectId}/tasks/new`}
                     className="inline-flex items-center gap-2 px-6 py-2 bg-black text-white rounded-full hover:bg-gray-800"
                 >
