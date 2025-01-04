@@ -94,7 +94,7 @@ const projectsController = {
                     return res.status(403).json({ message: 'Invalid token' });
                 }
 
-                // Lấy danh sách dự án
+                // Lấy danh sách dự án mà người dùng tham gia
                 const projects = await ProjectMembers.find({
                     user_id: userData.id
                 }).populate('project_id');

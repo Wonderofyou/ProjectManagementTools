@@ -20,7 +20,7 @@ export default function ProjectsPage() {
     useEffect(() => {
         axios.get('v1/projects/get-projects').then(response => {
             setProjects(response.data.projects);
-            console.log("Projects data:", response.data);
+            // console.log("Projects data:", response.data);
         }).catch(error => {
             console.error("Error fetching projects:", error);
         });

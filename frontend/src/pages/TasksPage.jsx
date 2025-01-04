@@ -4,7 +4,7 @@ import axios from "axios";
 
 export default function TasksPage() {
     const { projectId } = useParams();
-    console.log("Project ID:", projectId);
+    //console.log("Project ID:", projectId);
     const [tasks, setTasks] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [tasksPerPage] = useState(6);
@@ -87,7 +87,7 @@ export default function TasksPage() {
             <h1 className="text-3xl font-bold mb-8">Tasks</h1>
             <div className="flex flex-col space-y-3">
                 {currentTasks.length > 0 ? currentTasks.map(task => (
-                    <div key={task._id} className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow relative">
+                    <div key={task.task_id._id} className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow relative">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center space-x-4">
                                 <div className="text-gray-400">
@@ -96,20 +96,20 @@ export default function TasksPage() {
                                     </svg>
                                 </div>
                                 <div>
-                                    <h2 className="font-medium text-lg">{task.name}</h2>
+                                    <h2 className="font-medium text-lg">{task.task_id.name}</h2>
                                     <p className="text-sm text-gray-500">
-                                        Opened {getDaysFromCreation(task.createdAt)} days by {task.created_by?.name || 'Unknown'}
+                                        Opened {getDaysFromCreation(task.task_id.createdAt)} days by {task.task_id.created_by?.name || 'Unknown'}
                                     </p>
-                                    <p className="text-sm text-gray-600 mt-1">{task.description}</p>
+                                    <p className="text-sm text-gray-600 mt-1">{task.task_id.description}</p>
                                 </div>
                             </div>
 
                             <div className="flex items-center space-x-2">
-                                <span className={`px-3 py-1 rounded-full text-sm ${getStatusColor(task.status)}`}>
-                                    {task.status}
+                                <span className={`px-3 py-1 rounded-full text-sm ${getStatusColor(task.task_id.status)}`}>
+                                    {task.task_id.status}
                                 </span>
-                                <span className={`px-3 py-1 rounded-full text-sm ${getPriorityColor(task.priority)}`}>
-                                    {task.priority}
+                                <span className={`px-3 py-1 rounded-full text-sm ${getPriorityColor(task.task_id.priority)}`}>
+                                    {task.task_id.priority}
                                 </span>
                             </div>
 
@@ -119,28 +119,28 @@ export default function TasksPage() {
                                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                         </svg>
-                                        <span>{formatTimeRemaining(task.end_date)}</span>
+                                        <span>{formatTimeRemaining(task.task_id.end_date)}</span>
                                     </span>
                                 </div>
                             </div>
                         </div>
 
-                        <button 
+                        <button
                             onClick={(e) => handleDeleteClick(e, task)}
                             className="absolute bottom-1 right-3 p-2 text-gray-500 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"
                         >
-                            <svg 
-                                xmlns="http://www.w3.org/2000/svg" 
-                                className="h-5 w-5" 
-                                fill="none" 
-                                viewBox="0 0 24 24" 
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-5 w-5"
+                                fill="none"
+                                viewBox="0 0 24 24"
                                 stroke="currentColor"
                             >
-                                <path 
-                                    strokeLinecap="round" 
-                                    strokeLinejoin="round" 
-                                    strokeWidth={2} 
-                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" 
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                                 />
                             </svg>
                         </button>
@@ -185,7 +185,7 @@ export default function TasksPage() {
                     Previous
                 </button>
                 <span className="px-4 py-2">Page {currentPage} of {totalPages}</span>
-                <button 
+                <button
                     onClick={() => currentPage < totalPages && setCurrentPage(currentPage + 1)}
                     className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
                     disabled={currentPage === totalPages}

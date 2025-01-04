@@ -1,5 +1,6 @@
 const Task = require("../models/Task");
 const ProjectMembers = require("../models/ProjectMembers");
+const TaskMembers = require("../models/TaskMembers");
 const jwt = require("jsonwebtoken");
 const Project = require("../models/Project");
 const mongoose = require('mongoose');
@@ -24,20 +25,26 @@ const tasksController = {
                 }
 
 
-                const { name, description, status, priority, start_date, end_date } = req.body;
+                const { name, description, status, priority, start_date, end_date, assigned_members } = req.body;
+
+                const updatedAssignedMembers = Array.isArray(assigned_members) ? [...assigned_members] : [];
+
+                // Thêm userData.id vào danh sách nếu chưa có
+                if (!updatedAssignedMembers.includes(userData.id)) {
+                    updatedAssignedMembers.push(userData.id);
+                }
 
                 const { project_id } = req.params;
-                console.log("create project_id: ", project_id);
-                console.log("create userdat_id: ", userData.id);
+                // console.log("create project_id: ", project_id);
+                // console.log("create userdat_id: ", userData.id);
 
-                const isAdminOfThisProject = await ProjectMembers.find({
+                const isAdminOfThisProject = await ProjectMembers.findOne({
                     project_id: project_id,
                     user_id: userData.id,
                     role: "admin",
                 });
 
-                if (isAdminOfThisProject.length === 0) {
-                    console.log("You are not authorized to create tasks for this project");
+                if (!isAdminOfThisProject) {
                     return res.status(403).json({ message: "You are not authorized to create tasks for this project" });
                 }
 
@@ -52,7 +59,17 @@ const tasksController = {
                     start_date: start_date || Date.now(),
                     end_date: end_date || new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
                 });
-                //gắn task cho người khác, ở TaskMembers
+
+                // Ghi nhận các thành viên được assign vào bảng TaskMembers
+                if (Array.isArray(updatedAssignedMembers) && updatedAssignedMembers.length > 0) {
+                    const taskMembersData = updatedAssignedMembers.map(memberId => ({
+                        task_id: newTask._id,
+                        assignee_id: memberId,
+                        assigned_by: userData.id,
+                    }));
+
+                    await TaskMembers.insertMany(taskMembersData);
+                }
 
                 // Phản hồi
                 res.status(201).json({
@@ -82,25 +99,27 @@ const tasksController = {
                 }
 
                 const { project_id } = req.params;  // Changed to params from query
-                console.log("reg parmas: ", req.params);
-                console.log("reg body: ", req.body);
+                // console.log("reg parmas: ", req.params);
+                // console.log("reg body: ", req.body);
 
-                if (!mongoose.Types.ObjectId.isValid(project_id)) {
-                    console.log("Invalid project_id");
-                }
+                // if (!mongoose.Types.ObjectId.isValid(project_id)) {
+                //     console.log("Invalid project_id");
+                // }
 
-                console.log("get: ", project_id);
-                console.log("get: ", userData.id);
+                // console.log("get: ", project_id);
+                // console.log("get: ", userData.id);
 
                 // Kiểm tra quyền trong dự án
                 const isMember = await ProjectMembers.findOne({ project_id, user_id: userData.id });
-                console.log(isMember);
+
                 if (!isMember) {
                     return res.status(403).json({ message: "You are not authorized to view tasks for this project" });
                 }
 
-                // Lấy danh sách các task
-                const tasks = await Task.find({ project_id });
+                // Lấy danh sách các task mà người dùng tham gia
+                const tasks = await TaskMembers.find({ assignee_id: userData.id }).populate('task_id');
+
+                console.log("tasks: ", tasks);
 
                 // Phản hồi
                 res.status(200).json({
@@ -110,6 +129,46 @@ const tasksController = {
             });
         } catch (error) {
             console.error("Error getting tasks:", error);
+            res.status(500).json({ message: "Internal server error" });
+        }
+    },
+
+
+    // Lấy danh sách các thành viên trong dự án
+    getMembersInProject: async (req, res) => {
+        try {
+            const { token } = req.cookies;
+
+            if (!token) {
+                return res.status(401).json({ message: "Authentication required" });
+            }
+
+            jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+                if (err) {
+                    return res.status(403).json({ message: "Invalid token" });
+                }
+
+                const { project_id } = req.params;
+
+                // const isMember = await ProjectMembers.findOne({ project_id, user_id: userData.id });
+
+                // if (!isMember) {
+                //     return res.status(403).json({ message: "You are not authorized to view members for this project" });
+                // }
+
+                // Lấy danh sách thành viên trong dự án (không bao gồm user hiện tại)
+                const members = await ProjectMembers.find({
+                    project_id: project_id,
+                    user_id: { $ne: userData.id } // Toán tử $ne để loại trừ user hiện tại
+                }).populate('user_id')
+
+                res.status(200).json({
+                    message: "Members retrieved successfully",
+                    members,
+                });
+            });
+        } catch (error) {
+            console.error("Error getting members:", error);
             res.status(500).json({ message: "Internal server error" });
         }
     },

@@ -1,11 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
 export default function AddNewTaskPage() {
     const navigate = useNavigate();
-    const { projectId } = useParams(); // Get project_id from URL parameters
-    console.log(projectId);
+    const { projectId } = useParams();
     const [formData, setFormData] = useState({
         name: '',
         description: '',
@@ -13,19 +12,44 @@ export default function AddNewTaskPage() {
         end_date: '',
         status: 'Pending',
         priority: 'Low',
+        assigned_members: [], // Add assigned_members field
     });
+
+    const [members, setMembers] = useState([]); // Store project members
+    const [showAssignModal, setShowAssignModal] = useState(false);
+
+    useEffect(() => {
+        if (projectId) {
+            axios.get(`/v1/tasks/get-members-in-project/${projectId}`)
+                .then(response => {
+                    setMembers(response.data.members);
+                    console.log(response.data.members);
+                })
+                .catch(error => {
+                    console.error("Error fetching members in project:", error);
+                });
+        }
+    }, [projectId]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
 
+    const handleMemberToggle = (memberId) => {
+        setFormData(prevFormData => {
+            const isAssigned = prevFormData.assigned_members.includes(memberId);
+            const updatedMembers = isAssigned
+                ? prevFormData.assigned_members.filter(id => id !== memberId)
+                : [...prevFormData.assigned_members, memberId];
+            return { ...prevFormData, assigned_members: updatedMembers };
+        });
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Include projectId in the URL for the POST request
         axios.post(`/v1/tasks/create-task/${projectId}`, formData)
             .then(() => {
-                console.log(formData);
                 navigate(`/projects/${projectId}/tasks`);
             })
             .catch(error => {
@@ -108,6 +132,15 @@ export default function AddNewTaskPage() {
                         <option value="High">High</option>
                     </select>
                 </div>
+                <div className="mb-4">
+                    <button
+                        type="button"
+                        onClick={() => setShowAssignModal(true)}
+                        className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+                    >
+                        Assign Members
+                    </button>
+                </div>
                 <div className="flex justify-center items-center">
                     <button
                         type="submit"
@@ -117,6 +150,37 @@ export default function AddNewTaskPage() {
                     </button>
                 </div>
             </form>
+
+            {showAssignModal && (
+                <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
+                    <div className="bg-white rounded-lg shadow-lg p-6 w-1/3">
+                        <h2 className="text-xl font-bold mb-4">Assign Members</h2>
+                        <ul>
+                            {members.map(member => (
+                                <li key={member.user_id._id} className="flex items-center mb-2">
+                                    <input
+                                        type="checkbox"
+                                        id={`member-${member.user_id._id}`}
+                                        checked={formData.assigned_members.includes(member.user_id._id)}
+                                        onChange={() => handleMemberToggle(member.user_id._id)}
+                                    />
+                                    <label htmlFor={`member-${member.user_id._id}`} className="ml-2">
+                                        {member.user_id.name}
+                                    </label>
+                                </li>
+                            ))}
+                        </ul>
+                        <div className="flex justify-end mt-4">
+                            <button
+                                onClick={() => setShowAssignModal(false)}
+                                className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

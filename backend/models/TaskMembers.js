@@ -13,16 +13,7 @@ const TaskMembersSchema = new mongoose.Schema(
             ref: 'User', // Tham chiếu tới User model
             required: true, // Bắt buộc phải có user_id
         },
-        assigned_at: {
-            type: Date,
-            default: Date.now, // Mặc định là thời gian hiện tại khi gia nhập
-        },
-        status: {
-            type: String,
-            enum: ["Pending", "On Progress", "Finish"], // Thêm enum để giới hạn giá trị
-            default: "Pending"
-        },
-        assignee_by: {
+        assigned_by: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User', // Tham chiếu tới User model
             required: true, // Bắt buộc phải có user_id
