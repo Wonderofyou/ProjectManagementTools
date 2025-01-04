@@ -49,6 +49,7 @@ const tasksController = {
                     start_date: start_date || Date.now(),
                     end_date: end_date || new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
                 });
+                //gắn task cho người khác, ở TaskMembers
 
                 // Phản hồi
                 res.status(201).json({
@@ -78,8 +79,6 @@ const tasksController = {
                 }
 
                 const { project_id } = req.params;  // Changed to params from query
-                console.log("get: ", project_id);
-                console.log("get: ", userData.id);
 
                 // Kiểm tra quyền trong dự án
                 // const isMember = await ProjectMembers.findOne({ project_id: project_id });

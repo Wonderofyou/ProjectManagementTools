@@ -47,14 +47,37 @@ export default function ProjectsPage() {
 
     const handleDeleteClick = (e, project) => {
         e.preventDefault();
-        setProjectToDelete(project);
+        setSelectedProject(project);
         setShowDeleteModal(true);
+        console.log("Selected delete project:", selectedProject);
+
     };
 
     const handleInviteMessageChange = (e) => {
         setInviteMessage(e.target.value);  // Update invite message
     };
 
+    const handleConfirmDelete = async () => {
+        if (!selectedProject) return; // Kiểm tra nếu không có project để xóa
+
+        try {
+            console.log(selectedProject);
+            // Gọi API xóa project
+            await axios.delete(`v1/projects/delete-project/${selectedProject._id}`);
+
+            // Xóa project khỏi danh sách
+            setProjects(projects.filter(project => project.project_id._id !== selectedProject._id));
+
+            alert("Project deleted successfully.");
+        } catch (error) {
+            console.error("Error deleting project:", error);
+            alert("Failed to delete project. Please try again.");
+        } finally {
+            // Đóng modal xóa sau khi hoàn thành
+            setShowDeleteModal(false);
+            setSelectedProject(null);
+        }
+    };
     const handleInviteClick = (e, project) => {
         e.preventDefault();
         setSelectedProject(project);  // Lưu toàn bộ object project thay vì chỉ projectId
@@ -90,11 +113,7 @@ export default function ProjectsPage() {
 
 
 
-    const handleConfirmDelete = () => {
-        console.log("Deleting project:", projectToDelete);
-        setShowDeleteModal(false);
-        setProjectToDelete(null);
-    };
+
 
     const indexOfLastProject = currentPage * projectsPerPage;
     const indexOfFirstProject = indexOfLastProject - projectsPerPage;
@@ -107,7 +126,7 @@ export default function ProjectsPage() {
 
             <div className="grid grid-cols-2 gap-x-8 gap-y-6 max-w-7xl mx-auto">
                 {currentProjects.length > 0 ? currentProjects.map(project => (
-                    <Link key={project._id} to={`/projects/${project._id}/tasks`}>
+                    <Link key={project._id} to={`/projects/${project.project_id._id}/tasks`}>
                         <div className="bg-white p-6 rounded-xl shadow-sm h-full relative">
                             <div className="flex justify-between items-start mb-4 border-b pb-4">
                                 <h2 className="text-xl font-semibold">{project.project_id.name}</h2>
@@ -163,7 +182,7 @@ export default function ProjectsPage() {
                             {/* Delete button */}
                             <div className="absolute bottom-1 right-4">
                                 <button
-                                    onClick={(e) => handleDeleteClick(e, project)}
+                                    onClick={(e) => handleDeleteClick(e, project.project_id)}
                                     className="p-2 text-gray-500 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"
                                 >
                                     <svg
@@ -241,6 +260,7 @@ export default function ProjectsPage() {
                                     className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
                                 >
                                     Cancel
+
                                 </button>
                                 <button
                                     type="submit"

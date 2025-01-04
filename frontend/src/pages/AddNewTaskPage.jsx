@@ -5,7 +5,7 @@ import axios from "axios";
 export default function AddNewTaskPage() {
     const navigate = useNavigate();
     const { projectId } = useParams(); // Get project_id from URL parameters
-
+    console.log(projectId);
     const [formData, setFormData] = useState({
         name: '',
         description: '',

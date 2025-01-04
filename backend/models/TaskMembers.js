@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 // Tạo schema cho ProjectMembers
-const ProjectMembersSchema = new mongoose.Schema(
+const TaskMembersSchema = new mongoose.Schema(
     {
         task_id: {
             type: mongoose.Schema.Types.ObjectId,
@@ -34,6 +34,6 @@ const ProjectMembersSchema = new mongoose.Schema(
 );
 
 // Tạo model từ schema
-const ProjectMembers = mongoose.model('ProjectMembers', ProjectMembersSchema);
+const TaskMembers = mongoose.model('TaskMembers', TaskMembersSchema);
 
-module.exports = ProjectMembers;
+module.exports = TaskMembers;

@@ -4,6 +4,7 @@ const projectsController = require('../controllers/projectsController');
 
 router.post('/create-project', projectsController.createProject);
 router.get('/get-projects', projectsController.getProjects);
+router.delete('/delete-project/:projectId', projectsController.deleteProject);
 
 
 module.exports = router;
