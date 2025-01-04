@@ -126,7 +126,7 @@ export default function ProjectsPage() {
 
             <div className="grid grid-cols-2 gap-x-8 gap-y-6 max-w-7xl mx-auto">
                 {currentProjects.length > 0 ? currentProjects.map(project => (
-                    <Link key={project._id} to={`/projects/${project.project_id._id}/tasks`}>
+                    <Link key={project.project_id._id} to={`/projects/${project.project_id._id}/tasks`}>
                         <div className="bg-white p-6 rounded-xl shadow-sm h-full relative">
                             <div className="flex justify-between items-start mb-4 border-b pb-4">
                                 <h2 className="text-xl font-semibold">{project.project_id.name}</h2>
