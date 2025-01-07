@@ -13,6 +13,7 @@ export default function InvitationPage() {
             try {
                 const response = await axios.get('/v1/user/invitations');
                 setInvitations(response.data.invitations);
+                console.log(invitations);
                 setLoading(false);
             } catch (err) {
                 setError('Error fetching invitations');
@@ -145,7 +146,7 @@ export default function InvitationPage() {
                         ) : (
                             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                                 {invitations.map((invitation) => (
-                                    <div 
+                                    <div
                                         key={invitation._id}
                                         className="bg-white rounded-lg border hover:shadow-lg transition-all duration-200"
                                     >
@@ -181,18 +182,17 @@ export default function InvitationPage() {
                                                         </button>
                                                     </div>
                                                 ) : (
-                                                    <div className={`flex items-center ${
-                                                        invitation.status === "accepted" ? "text-green-600" : "text-red-600"
-                                                    }`}>
+                                                    <div className={`flex items-center ${invitation.status === "accepted" ? "text-green-600" : "text-red-600"
+                                                        }`}>
                                                         <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
-                                                                d={invitation.status === "accepted" 
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                                                                d={invitation.status === "accepted"
                                                                     ? "M5 13l4 4L19 7"
                                                                     : "M6 18L18 6M6 6l12 12"
-                                                                } 
+                                                                }
                                                             />
                                                         </svg>
-                                                        {invitation.status === "accepted" 
+                                                        {invitation.status === "accepted"
                                                             ? "You have accepted this invitation"
                                                             : "You have declined this invitation"
                                                         }

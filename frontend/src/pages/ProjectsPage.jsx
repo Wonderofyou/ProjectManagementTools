@@ -50,7 +50,6 @@ export default function ProjectsPage() {
         setSelectedProject(project);
         setShowDeleteModal(true);
         console.log("Selected delete project:", selectedProject);
-
     };
 
     const handleInviteMessageChange = (e) => {

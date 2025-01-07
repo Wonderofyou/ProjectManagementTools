@@ -117,9 +117,17 @@ const tasksController = {
                 }
 
                 // Lấy danh sách các task mà người dùng tham gia
-                const tasks = await TaskMembers.find({ assignee_id: userData.id }).populate('task_id');
+                let tasks = await TaskMembers.find({
+                    assignee_id: userData.id, // Điều kiện người được gán
+                }).populate('task_id');
 
-                console.log("tasks: ", tasks);
+                // Lọc ra các task thuộc về dự án
+                tasks = tasks.filter(task =>
+                    task.task_id && task.task_id.project_id &&
+                    task.task_id.project_id.equals(project_id) // So sánh ObjectId
+                );
+
+                console.log("Valid tasks: ", tasks);
 
                 // Phản hồi
                 res.status(200).json({

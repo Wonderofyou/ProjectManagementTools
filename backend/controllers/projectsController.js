@@ -150,24 +150,22 @@ const projectsController = {
                 }
 
                 // Xóa các thành viên trong dự án
-                const tasks = await Task.findOne({ project_id: '6778b24da8ed195aeea9dd2d' });
-                console.log(tasks);
 
-                // const tasks = await Task.find({ project_id: projectId });
-                // const taskIds = tasks.map(task => task._id); // Lấy danh sách taskId
+                const tasks = await Task.find({ project_id: projectId });
+                const taskIds = tasks.map(task => task._id); // Lấy danh sách taskId
 
-                // console.log('taskIds:', taskIds);
+                console.log('taskIds:', taskIds);
 
-                // // Xóa tất cả các thành viên tham gia công việc (TaskMembers) dựa trên taskId
-                // await TaskMembers.deleteMany({ task_id: { $in: taskIds } });
+                // Xóa tất cả các thành viên tham gia công việc (TaskMembers) dựa trên taskId
+                await TaskMembers.deleteMany({ task_id: { $in: taskIds } });
 
-                // // Xóa tất cả công việc trong dự án
-                // await Task.deleteMany({ project_id: projectId });
+                // Xóa tất cả công việc trong dự án
+                await Task.deleteMany({ project_id: projectId });
 
-                // // Xóa tất cả thành viên trong dự án
-                // await ProjectMembers.deleteMany({ project_id: projectId });
+                // Xóa tất cả thành viên trong dự án
+                await ProjectMembers.deleteMany({ project_id: projectId });
 
-                // await Project.findByIdAndDelete(projectId);
+                await Project.findByIdAndDelete(projectId);
 
                 // Phản hồi
                 res.status(200).json({

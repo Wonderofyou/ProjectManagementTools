@@ -112,6 +112,8 @@ const userController = {
           .populate('project_id', 'name') // Lấy thông tin dự án (tên dự án)
           .populate('inviter_id', 'name email'); // Lấy thông tin người gửi (tên và email)
 
+        console.log(invitations);
+
         return res.status(200).json({
           message: "Invitations fetched successfully",
           invitations,
