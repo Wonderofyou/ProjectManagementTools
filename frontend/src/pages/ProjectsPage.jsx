@@ -14,6 +14,9 @@ export default function ProjectsPage() {
     const [isInviting, setIsInviting] = useState(false);  // Loading state for the invite button
     const [showInviteForm, setShowInviteForm] = useState(false); // New state for showing invite form
     const [role, setRole] = useState("member");  // Khởi tạo state cho role, mặc định là 'member'
+    const [showNotification, setShowNotification] = useState(false);
+    const [NotificationMessage, setNotificationMessage] = useState("");
+
 
 
 
@@ -67,10 +70,13 @@ export default function ProjectsPage() {
             // Xóa project khỏi danh sách
             setProjects(projects.filter(project => project.project_id._id !== selectedProject._id));
 
-            alert("Project deleted successfully.");
+            setNotificationMessage("Project deleted successfully.");
+            setShowNotification(true);
+            console.log(NotificationMessage);
         } catch (error) {
-            console.error("Error deleting project:", error);
-            alert("Failed to delete project. Please try again.");
+            const errorMessage = error.response?.data?.message || error.message || "Unknown error occurred";
+            setNotificationMessage(errorMessage);
+            setShowNotification(true);
         } finally {
             // Đóng modal xóa sau khi hoàn thành
             setShowDeleteModal(false);
@@ -91,19 +97,23 @@ export default function ProjectsPage() {
             console.log(selectedProject);
             console.log(inviteEmail, inviteMessage, role);
 
-            await axios.post('v1/user/invite', {
+            response = await axios.post('v1/user/invite', {
                 projectId: selectedProject._id,
                 email: inviteEmail,
                 content: inviteMessage,
                 role: role,
             });
 
-            alert("Invitation sent successfully!");
+            setShowNotification(true);
+            setNotificationMessage("Invite sent successfully");
             setInviteEmail("");  // Xóa dữ liệu input sau khi gửi
             setInviteMessage("");
             setShowInviteForm(false);  // Ẩn form sau khi gửi mời
         } catch (error) {
-            alert("Error sending invitation.");
+            const errorMessage = error.response?.data?.message || error.message || "Unknown error occurred";
+            setShowNotification(true);
+            setNotificationMessage(errorMessage);
+            console.log(NotificationMessage);
             console.error("Error sending invite:", error);
         } finally {
             setIsInviting(false);  // Tắt trạng thái loading
@@ -118,7 +128,6 @@ export default function ProjectsPage() {
     const indexOfFirstProject = indexOfLastProject - projectsPerPage;
     const currentProjects = projects.slice(indexOfFirstProject, indexOfLastProject);
     const totalPages = Math.ceil(projects.length / projectsPerPage);
-
     return (
         <div className="p-8 bg-blue-50 min-h-screen relative">
             <h1 className="text-3xl font-bold mb-8">Project</h1>
@@ -273,6 +282,25 @@ export default function ProjectsPage() {
                     </div>
                 </div>
             )}
+
+            {showNotification && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg p-6 w-80 h-40 relative">
+                        <h3 className="text-lg font-semibold mb-4">{NotificationMessage}</h3>
+                        {/* Nút Cancel nằm ở góc phải dưới */}
+                        <div className="absolute bottom-4 right-4">
+                            <button
+                                type="button"
+                                onClick={() => setShowNotification(false)}
+                                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
 
             <div className="flex justify-center mt-8 gap-2">
                 <button
