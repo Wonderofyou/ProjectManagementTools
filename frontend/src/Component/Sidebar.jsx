@@ -18,7 +18,7 @@ const Sidebar = () => {
         { name: "Project", link: "/projects", icon: GoProject },
         { name: "Setting", link: "/setting", icon: RiSettings4Line },
         {
-            name: "Notifications",
+            name: "Notifications", link:"/notifications", icon: AiOutlineBell,
             link: null, // Không có link, dùng để hiển thị dropdown
             icon: AiOutlineBell,
             isNotification: true,
