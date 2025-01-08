@@ -58,85 +58,91 @@ export default function AddNewTaskPage() {
     };
 
     return (
-        <div className="max-w-full mx-auto mt-10">
-            <h1 className="text-2xl font-bold mb-4">Add New Task</h1>
-            <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-                <div className="flex gap-4 mb-4">
+        <div className="max-w-full mx-auto mt-10 bg-blue-100 py-10">
+            <h1 className="text-3xl font-semibold text-gray-800 mb-6 text-center bg-blue-100 py-4 rounded-md shadow-md">
+                Add New Task
+            </h1>
+            <form onSubmit={handleSubmit} className="bg-white shadow-lg rounded-lg px-8 pt-6 pb-8 mb-4 max-w-4xl mx-auto">
+                <div className="flex gap-4 mb-6">
                     <div className="flex-1">
-                        <label className="block text-gray-700 text-sm font-bold mb-2">Task Name</label>
+                        <label className="block text-lg font-medium text-gray-800 mb-2">Task Name</label>
                         <input
                             type="text"
                             name="name"
                             value={formData.name}
                             onChange={handleChange}
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
+                            className="shadow-md appearance-none border-2 border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                             required
                         />
                     </div>
                     <div className="flex-1">
-                        <label className="block text-gray-700 text-sm font-bold mb-2">Start Date</label>
+                        <label className="block text-lg font-medium text-gray-800 mb-2">Start Date</label>
                         <input
                             type="date"
                             name="start_date"
                             value={formData.start_date}
                             onChange={handleChange}
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
+                            className="shadow-md appearance-none border-2 border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                             required
                         />
                     </div>
                     <div className="flex-1">
-                        <label className="block text-gray-700 text-sm font-bold mb-2">End Date</label>
+                        <label className="block text-lg font-medium text-gray-800 mb-2">End Date</label>
                         <input
                             type="date"
                             name="end_date"
                             value={formData.end_date}
                             onChange={handleChange}
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
+                            className="shadow-md appearance-none border-2 border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                             required
                         />
                     </div>
                 </div>
-                <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2">Description</label>
+                <hr className="border-gray-300 mb-6" />
+                <div className="mb-6">
+                    <label className="block text-lg font-medium text-gray-800 mb-2">Description</label>
                     <textarea
                         name="description"
                         value={formData.description}
                         onChange={handleChange}
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
+                        className="shadow-md appearance-none border-2 border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         required
                     />
                 </div>
-                <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2">Status</label>
+                <hr className="border-gray-300 mb-6" />
+                <div className="mb-6">
+                    <label className="block text-lg font-medium text-gray-800 mb-2">Status</label>
                     <select
                         name="status"
                         value={formData.status}
                         onChange={handleChange}
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
+                        className="shadow-md appearance-none border-2 border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                         <option value="Pending">Pending</option>
                         <option value="In Progress">In Progress</option>
                         <option value="Completed">Completed</option>
                     </select>
                 </div>
-                <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2">Priority</label>
+                <hr className="border-gray-300 mb-6" />
+                <div className="mb-6">
+                    <label className="block text-lg font-medium text-gray-800 mb-2">Priority</label>
                     <select
                         name="priority"
                         value={formData.priority}
                         onChange={handleChange}
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
+                        className="shadow-md appearance-none border-2 border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                         <option value="Low">Low</option>
                         <option value="Medium">Medium</option>
                         <option value="High">High</option>
                     </select>
                 </div>
-                <div className="mb-4">
+                <hr className="border-gray-300 mb-6" />
+                <div className="mb-6">
                     <button
                         type="button"
                         onClick={() => setShowAssignModal(true)}
-                        className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+                        className="bg-green-500 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300"
                     >
                         Assign Members
                     </button>
@@ -144,7 +150,7 @@ export default function AddNewTaskPage() {
                 <div className="flex justify-center items-center">
                     <button
                         type="submit"
-                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                        className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-300"
                     >
                         Create Task
                     </button>
@@ -173,7 +179,7 @@ export default function AddNewTaskPage() {
                         <div className="flex justify-end mt-4">
                             <button
                                 onClick={() => setShowAssignModal(false)}
-                                className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
+                                className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300"
                             >
                                 Close
                             </button>
