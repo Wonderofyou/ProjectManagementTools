@@ -129,7 +129,7 @@ export default function ProjectsPage() {
                         <div className="bg-white p-6 rounded-xl shadow-sm h-full relative">
                             <div className="flex justify-between items-start mb-4 border-b pb-4">
                                 <h2 className="text-xl font-semibold">{project.project_id.name}</h2>
-                                <span className={`px-3 py-1 rounded-full text-sm ${getStatusColor(project.project_id.status)}`}>
+                                <span className={`px-4 py-1 rounded-full text-sm ${getStatusColor(project.project_id.status)}`}>
                                     {project.project_id.status}
                                 </span>
                             </div>
@@ -160,7 +160,7 @@ export default function ProjectsPage() {
                             </div>
 
                             {/* Invite button */}
-                            <div className="absolute top-4 right-4">
+                            <div className="absolute bottom-1 right-14 ">
                                 <button
                                     onClick={(e) => handleInviteClick(e, project.project_id)}  // Invite button click event
                                     className="p-2 text-blue-500 hover:text-blue-700 hover:bg-blue-50 rounded-full transition-colors"
@@ -173,7 +173,7 @@ export default function ProjectsPage() {
                                         viewBox="0 0 24 24"
                                     >
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                                            d="M5 12h14M12 5l7 7-7 7M12 5l-7 7 7 7" />
+                                            d="M3 3h18a1 1 0 011 1v16a1 1 0 01-1 1H3a1 1 0 01-1-1V4a1 1 0 011-1zM12 13l4-4m0 0l-4-4m4 4H7" />
                                     </svg>
                                 </button>
                             </div>
