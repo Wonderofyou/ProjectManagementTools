@@ -27,12 +27,12 @@ export default function TasksPage() {
     const getStatusColor = (status) => {
         switch (status) {
             case 'Finish':
-                return 'bg-green-100 text-green-600';
+                return 'bg-green-100 text-green-600'; // Green for finished tasks
             case 'On Progress':
-                return 'bg-blue-100 text-blue-600';
+                return 'bg-blue-100 text-blue-600'; // Blue for ongoing tasks
             case 'Pending':
             default:
-                return 'bg-gray-100 text-gray-600';
+                return 'bg-gray-100 text-gray-600'; // Default color for pending tasks
         }
     };
 
