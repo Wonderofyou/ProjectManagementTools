@@ -12,6 +12,8 @@ import InvitationPage from './pages/InvitationPage.jsx';
 import TasksPage from "./pages/TasksPage.jsx";
 import AddNewTaskPage from "./pages/AddNewTaskPage.jsx";
 import AddNewProjectPage from "./pages/AddNewProjectPage.jsx";
+import ReportPage from './pages/ReportPage.jsx';
+import ReportsListPage from './pages/ReportsListPage.jsx';
 
 
 
@@ -33,6 +35,8 @@ function App() {
           <Route path='/projects/new' element={<AddNewProjectPage />} />
           <Route path="/projects/:projectId/tasks" element={<TasksPage />} />
           <Route path="/projects/:projectId/tasks/new" element={<AddNewTaskPage />} />
+          <Route path="/report" element={<ReportsListPage />} />
+          <Route path="/report/:projectId" element={<ReportPage />} />
         </Route>
 
 
