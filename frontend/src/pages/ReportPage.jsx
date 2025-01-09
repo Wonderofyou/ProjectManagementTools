@@ -1,6 +1,10 @@
 import React from "react";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import { useParams } from "react-router-dom";
+import { useState } from "react";
+import { useEffect } from "react";
+import axios from "axios";
 
 const ReportPage = () => {
   const generatePDF = () => {
@@ -17,6 +21,38 @@ const ReportPage = () => {
       pdf.save("report.pdf");
     });
   };
+  //usestate owner, product
+  const { projectId } = useParams();
+  const [project, setProject] = useState({});
+  const [tasks, setTasks] = useState([]);
+
+  useEffect(() => {
+    if (projectId) {
+      axios.get(`/v1/projects/get-project/${projectId}`)
+        .then(response => {
+          setProject(response.data.project);
+        })
+        .catch(error => {
+          console.error("Error fetching tasks:", error);
+        });
+    }
+  }, [projectId]);
+
+  useEffect(() => {
+    if (projectId) {
+      axios.get(`/v1/tasks/get-tasks/${projectId}`)
+        .then(response => {
+          setTasks(response.data.tasks);
+          // console.log(response.data.tasks);
+        })
+        .catch(error => {
+          console.error("Error fetching tasks:", error);
+        });
+    }
+  }, [projectId]);
+  console.log(tasks)
+
+
 
   return (
     <div className="max-w-7xl mx-auto p-8 bg-gray-50 rounded-lg shadow-lg">
@@ -36,16 +72,14 @@ const ReportPage = () => {
         <div className="flex justify-between items-center mb-8">
           <div>
             <p className="text-lg font-medium">
-              Owner: <span className="font-bold">John Doe</span>
-            </p>
-            <p className="text-lg font-medium">
-              Driver: <span className="font-bold">James Charles</span>
+              Owner: <span className="font-bold">{project?.project_id?.owner_id?.name}</span>
             </p>
           </div>
           <div className="text-right">
             <h1 className="text-2xl font-bold">REPORT</h1>
             <p className="text-lg">
-              Due Date: <span className="font-bold">12 Dec 2023</span>
+              {/* add date here */}
+              Due Date: <span className="font-bold">{ }</span>
             </p>
           </div>
         </div>
@@ -54,7 +88,7 @@ const ReportPage = () => {
         <div className="flex justify-between items-center mb-8">
           <div className="flex flex-col items-center">
             <div className="w-24 h-24 rounded-full border-8 border-green-500 flex items-center justify-center text-2xl font-bold">
-              72%
+              {project?.project_id?.progress}
             </div>
             <p className="mt-4 font-medium">Completed</p>
           </div>
@@ -80,98 +114,31 @@ const ReportPage = () => {
           <table className="w-full border-collapse border border-gray-300">
             <thead>
               <tr className="bg-gray-200">
-                <th className="border border-gray-300 px-4 py-2">Teammate</th>
-                <th className="border border-gray-300 px-4 py-2">Task</th>
-                <th className="border border-gray-300 px-4 py-2">Progress %</th>
+                <th className="border border-gray-300 px-4 py-2">Task Name</th>
+                <th className="border border-gray-300 px-4 py-2">Status</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td className="border border-gray-300 px-4 py-2 text-center">
-                  Teammate 1
-                </td>
-                <td className="border border-gray-300 px-4 py-2 text-center">
-                  12
-                </td>
-                <td className="border border-gray-300 px-4 py-2 text-center">
-                  28.6%
-                </td>
-              </tr>
-              <tr>
-                <td className="border border-gray-300 px-4 py-2 text-center">
-                  Teammate 2
-                </td>
-                <td className="border border-gray-300 px-4 py-2 text-center">
-                  22
-                </td>
-                <td className="border border-gray-300 px-4 py-2 text-center">
-                  42.9%
-                </td>
-              </tr>
-              <tr>
-                <td className="border border-gray-300 px-4 py-2 text-center">
-                  Teammate 3
-                </td>
-                <td className="border border-gray-300 px-4 py-2 text-center">
-                  12
-                </td>
-                <td className="border border-gray-300 px-4 py-2 text-center">
-                  28.6%
-                </td>
-              </tr>
-              <tr>
-                <td className="border border-gray-300 px-4 py-2 text-center">
-                  Teammate 4
-                </td>
-                <td className="border border-gray-300 px-4 py-2 text-center">
-                  12
-                </td>
-                <td className="border border-gray-300 px-4 py-2 text-center">
-                  28.6%
-                </td>
-              </tr>
-              <tr>
-                <td className="border border-gray-300 px-4 py-2 text-center">
-                  Teammate 5
-                </td>
-                <td className="border border-gray-300 px-4 py-2 text-center">
-                  7
-                </td>
-                <td className="border border-gray-300 px-4 py-2 text-center">
-                  14.3%
-                </td>
-              </tr>
+              {tasks.map((item, index) => (
+                <tr key={index}>
+                  <td className="border border-gray-300 px-4 py-2 text-center">
+                    {item.task_id.name}
+                  </td>
+                  <td className="border border-gray-300 px-4 py-2 text-center">
+                    {item.task_id.status}
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
 
-        {/* Commit Section */}
-        <div className="mb-8">
-          <h2 className="text-xl font-bold mb-4">Last Commit</h2>
-          <div className="mb-4 p-4 bg-white rounded-lg shadow">
-            <h3 className="font-bold">Last commit of worst member</h3>
-            <p className="text-gray-600">Teammate 1 | 12 Aug 2023</p>
-            <p>
-              "I think this looks good we can go with his one for the hero
-              section..."
-            </p>
-          </div>
-          <div className="mb-4 p-4 bg-white rounded-lg shadow">
-            <h3 className="font-bold">Last commit of best member</h3>
-            <p className="text-gray-600">Teammate 1 | 12 Aug 2023</p>
-            <p>
-              "I think this looks good we can go with his one for the hero
-              section..."
-            </p>
-          </div>
-          <div className="p-4 bg-green-50 rounded-lg shadow">
-            <h3 className="font-bold">AI Suggestion</h3>
-            <p>"Your template is the best, keep continue"</p>
-          </div>
-        </div>
+
       </div>
     </div>
   );
 };
 
 export default ReportPage;
+
+
