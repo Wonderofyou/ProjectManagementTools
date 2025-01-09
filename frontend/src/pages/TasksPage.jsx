@@ -27,19 +27,26 @@ export default function TasksPage() {
     const handleStatusChange = async (task, newStatus) => {
         try {
             console.log(task.task_id._id);
+            // Gửi yêu cầu PUT đến API để cập nhật trạng thái của task bằng axios
+            const response = await axios.put(`/v1/tasks/update-status/${task.task_id._id}`, {
+                status: newStatus,  // Truyền trạng thái mới vào body
+            });
 
-            // Gửi yêu cầu PUT đến API để cập nhật trạng thái của task
-            const response = await axios.put(
-                `v1/tasks/update-status/${task.task_id._id}`,
-                { status: newStatus }, // Truyền trạng thái mới vào body
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                }
-            );
+            if (response.status !== 200) {
+                throw new Error(response.data.message || "Failed to update task status");
+            }
 
             const updatedTask = response.data;
+
+            // Cập nhật danh sách task trong UI
+            setTasks((prevTasks) =>
+                prevTasks.map((t) =>
+                    t.task_id._id === task.task_id._id
+                        ? { ...t, task_id: { ...t.task_id, status: updatedTask.task.status } }
+                        : t
+                )
+            );
+
             // Hiển thị thông báo thành công nếu cần
             alert("Task status updated successfully!");
         } catch (error) {

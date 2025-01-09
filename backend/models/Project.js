@@ -33,6 +33,12 @@ const ProjectSchema = new mongoose.Schema(
         updatedAt: {
             type: Date,
             default: Date.now
+        },
+        progress: {  // Thêm thuộc tính progress kiểu số thực
+            type: Number,
+            default: 0.0, // Giá trị mặc định là 0.0
+            min: 0,  // Đảm bảo giá trị không nhỏ hơn 0
+            max: 100, // Đảm bảo giá trị không lớn hơn 100
         }
     }
 );

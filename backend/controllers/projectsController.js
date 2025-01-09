@@ -46,6 +46,7 @@ const projectsController = {
                         end_date: end_date || Date.now() + 10 * 24 * 60 * 60 * 1000, // Mặc định cộng 10 ngày
                         status: status,
                         owner_id: user._id,
+                        progress: 0,
                     });
                 } catch (projectError) {
                     console.error('Error creating project:', projectError);
@@ -78,6 +79,36 @@ const projectsController = {
         }
     },
 
+    // Hàm cập nhật trạng thái và tiến độ dự án
+    updateStatusAndProgress: async (projectId) => {
+        try {
+            // Lấy tất cả các task trong dự án
+            const tasks = await Task.find({ project_id: projectId });
+
+            if (tasks.length === 0) {
+                const progress = 0;
+                await Project.findByIdAndUpdate(projectId, { progress });
+                return;
+            }
+
+            // Tính toán số lượng task có trạng thái "Completed"
+            const completedTasks = tasks.filter(task => task.status === 'Completed').length;
+
+            // Tính tiến độ dự án
+            const progress = Math.round((completedTasks / tasks.length) * 100);
+
+            // Cập nhật tiến độ của dự án
+            await Project.findByIdAndUpdate(projectId, { progress });
+
+            // Cập nhật trạng thái dự án nếu tiến độ đạt 100%
+            let newStatus = progress === 100 ? 'Completed' : 'In Progress';
+            await Project.findByIdAndUpdate(projectId, { status: newStatus });
+
+        } catch (error) {
+            console.error('Error updating status and progress:', error);
+        }
+    },
+
 
     // Lấy danh sách dự án
     getProjects: async (req, res) => {
@@ -107,6 +138,11 @@ const projectsController = {
                 //     console.log('No projects found for this user.');
                 // }
 
+                // Cập nhật trạng thái và tiến độ cho từng dự án trước khi trả về
+                for (let projectMember of projects) {
+                    await projectsController.updateStatusAndProgress(projectMember.project_id._id);
+                }
+
                 // Phản hồi
                 res.status(200).json({
                     projects: projects,
@@ -131,12 +167,12 @@ const projectsController = {
                 if (err) {
                     return res.status(403).json({ message: 'Invalid token' });
                 }
-                console.log(req.params);
+                // console.log(req.params);
 
                 const { projectId } = req.params;
 
-                console.log(projectId);
-                console.log(userData.id);
+                // console.log(projectId);
+                // console.log(userData.id);
 
                 // Kiểm tra xem người dùng có quyền xóa dự án không
                 const projectMember = await ProjectMembers.findOne({
@@ -154,7 +190,7 @@ const projectsController = {
                 const tasks = await Task.find({ project_id: projectId });
                 const taskIds = tasks.map(task => task._id); // Lấy danh sách taskId
 
-                console.log('taskIds:', taskIds);
+                // console.log('taskIds:', taskIds);
 
                 // Xóa tất cả các thành viên tham gia công việc (TaskMembers) dựa trên taskId
                 await TaskMembers.deleteMany({ task_id: { $in: taskIds } });
