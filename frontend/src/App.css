@@ -43,3 +43,27 @@
 .read-the-docs {
   color: #888;
 }
+
+
+/* Lâm thêm */
+/* Nếu sử dụng Tailwind, đảm bảo các lớp đã tồn tại */
+.z-50 {
+  z-index: 50;
+  /* Đảm bảo dropdown nằm phía trên */
+}
+
+.shadow-lg {
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+  /* Hiệu ứng nổi bật */
+}
+
+/* Nếu bạn không sử dụng Tailwind, bạn có thể thêm trực tiếp */
+.dropdown-menu {
+  z-index: 50;
+  position: absolute;
+  background: white;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 8px 0;
+}

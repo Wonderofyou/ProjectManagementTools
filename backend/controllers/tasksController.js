@@ -9,6 +9,67 @@ require("dotenv").config();
 const jwtSecret = process.env.JWT_SECRET;
 
 const tasksController = {
+    // Cập nhật trạng thái của task
+    updateTaskStatus: async (req, res) => {
+        try {
+            const { token } = req.cookies;
+
+            if (!token) {
+                return res.status(401).json({ message: "Authentication required" });
+            }
+
+            // Xác thực token
+            jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+                if (err) {
+                    return res.status(403).json({ message: "Invalid token" });
+                }
+
+                console.log("1\n");
+
+                const { task_id } = req.params; // Lấy `task_id` từ params
+                const { status } = req.body; // Lấy `status` từ body
+
+                // Kiểm tra xem `status` có hợp lệ không
+                const validStatuses = ["Pending", "In Progress", "Completed"];
+                if (!validStatuses.includes(status)) {
+                    return res.status(400).json({ message: "Invalid status value" });
+                }
+
+                // Kiểm tra quyền truy cập task
+                const isAssignee = await TaskMembers.findOne({
+                    task_id: task_id,
+                    assignee_id: userData.id,
+                });
+
+                if (!isAssignee) {
+                    return res.status(403).json({ message: "You are not authorized to update this task's status" });
+                }
+
+                console.log("đã tìm thấy\n");
+
+                // Cập nhật trạng thái task
+                const updatedTask = await Task.findByIdAndUpdate(
+                    task_id,
+                    { status },
+                    { new: true } // Trả về task đã cập nhật
+                );
+
+                if (!updatedTask) {
+                    return res.status(404).json({ message: "Task not found" });
+                }
+
+                // Phản hồi
+                res.status(200).json({
+                    message: "Task status updated successfully",
+                    task: updatedTask,
+                });
+            });
+        } catch (error) {
+            console.error("Error updating task status:", error);
+            res.status(500).json({ message: "Internal server error" });
+        }
+    },
+
     // Tạo task mới
     createTask: async (req, res) => {
         try {
@@ -127,7 +188,7 @@ const tasksController = {
                     task.task_id.project_id.equals(project_id) // So sánh ObjectId
                 );
 
-                console.log("Valid tasks: ", tasks);
+                // console.log("Valid tasks: ", tasks);
 
                 // Phản hồi
                 res.status(200).json({

@@ -16,13 +16,49 @@ export default function TasksPage() {
             axios.get(`/v1/tasks/get-tasks/${projectId}`)
                 .then(response => {
                     setTasks(response.data.tasks);
-                    console.log(response.data.tasks);
+                    // console.log(response.data.tasks);
                 })
                 .catch(error => {
                     console.error("Error fetching tasks:", error);
                 });
         }
     }, [projectId]);
+
+    const handleStatusChange = async (task, newStatus) => {
+        try {
+            console.log(task.task_id._id);
+            // Gửi yêu cầu PUT đến API để cập nhật trạng thái của task
+            const response = await fetch(`v1/tasks/update-status/${task.task_id._id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ status: newStatus }), // Truyền trạng thái mới vào body
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.message || "Failed to update task status");
+            }
+
+            const updatedTask = await response.json();
+
+            // Cập nhật danh sách task trong UI
+            setCurrentTasks((prevTasks) =>
+                prevTasks.map((t) =>
+                    t.task_id._id === task.task_id._id
+                        ? { ...t, task_id: { ...t.task_id, status: updatedTask.task.status } }
+                        : t
+                )
+            );
+
+            // Hiển thị thông báo thành công nếu cần
+            alert("Task status updated successfully!");
+        } catch (error) {
+            console.error("Error updating task status:", error);
+            alert("Failed to update task status. Please try again.");
+        }
+    };
 
     const getStatusColor = (status) => {
         switch (status) {
@@ -35,6 +71,7 @@ export default function TasksPage() {
                 return 'bg-gray-100 text-gray-600'; // Default color for pending tasks
         }
     };
+
 
     const getPriorityColor = (priority) => {
         switch (priority) {
@@ -72,10 +109,12 @@ export default function TasksPage() {
     };
 
     const handleConfirmDelete = () => {
-        console.log("Deleting task:", taskToDelete);
+        // console.log("Deleting task:", taskToDelete);
         setShowDeleteModal(false);
         setTaskToDelete(null);
     };
+
+
 
     const indexOfLastTask = currentPage * tasksPerPage;
     const indexOfFirstTask = indexOfLastTask - tasksPerPage;
@@ -104,14 +143,38 @@ export default function TasksPage() {
                                 </div>
                             </div>
 
-                            <div className="flex items-center space-x-2">
-                                <span className={`px-3 py-1 rounded-full text-sm ${getStatusColor(task.task_id.status)}`}>
+                            <div className="relative">
+                                <button
+                                    className={`px-3 py-1 rounded-full text-sm ${getStatusColor(task.task_id.status)}`}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        // Đóng menu nếu đang mở, ngược lại thì mở menu
+                                        setTaskToDelete(taskToDelete === task ? null : task);
+                                    }}
+                                >
                                     {task.task_id.status}
-                                </span>
-                                <span className={`px-3 py-1 rounded-full text-sm ${getPriorityColor(task.task_id.priority)}`}>
-                                    {task.task_id.priority}
-                                </span>
+                                </button>
+                                {taskToDelete === task && (
+                                    <div
+                                        className="absolute bg-white border rounded shadow-lg mt-2 z-50"
+                                        style={{ minWidth: "150px" }}
+                                    >
+                                        {["In Progress", "Completed"].map((status) => (
+                                            <button
+                                                key={status}
+                                                className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-200"
+                                                onClick={() => {
+                                                    handleStatusChange(task, status);
+                                                    setTaskToDelete(null); // Đóng menu sau khi chọn
+                                                }}
+                                            >
+                                                {status}
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
+
 
                             <div className="flex items-center space-x-4">
                                 <div className="bg-gray-100 px-4 py-1 rounded-full text-gray-600">
