@@ -27,24 +27,19 @@ export default function TasksPage() {
     const handleStatusChange = async (task, newStatus) => {
         try {
             console.log(task.task_id._id);
-            // Gửi yêu cầu PUT đến API để cập nhật trạng thái của task
-            const response = await fetch(`v1/tasks/update-status/${task.task_id._id}`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ status: newStatus }), // Truyền trạng thái mới vào body
+            // Gửi yêu cầu PUT đến API để cập nhật trạng thái của task bằng axios
+            const response = await axios.put(`/v1/tasks/update-status/${task.task_id._id}`, {
+                status: newStatus,  // Truyền trạng thái mới vào body
             });
 
-            if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.message || "Failed to update task status");
+            if (response.status !== 200) {
+                throw new Error(response.data.message || "Failed to update task status");
             }
 
-            const updatedTask = await response.json();
+            const updatedTask = response.data;
 
             // Cập nhật danh sách task trong UI
-            setCurrentTasks((prevTasks) =>
+            setTasks((prevTasks) =>
                 prevTasks.map((t) =>
                     t.task_id._id === task.task_id._id
                         ? { ...t, task_id: { ...t.task_id, status: updatedTask.task.status } }
@@ -59,6 +54,7 @@ export default function TasksPage() {
             alert("Failed to update task status. Please try again.");
         }
     };
+
 
     const getStatusColor = (status) => {
         switch (status) {

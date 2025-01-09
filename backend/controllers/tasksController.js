@@ -24,8 +24,6 @@ const tasksController = {
                     return res.status(403).json({ message: "Invalid token" });
                 }
 
-                console.log("1\n");
-
                 const { task_id } = req.params; // Lấy `task_id` từ params
                 const { status } = req.body; // Lấy `status` từ body
 
@@ -44,8 +42,6 @@ const tasksController = {
                 if (!isAssignee) {
                     return res.status(403).json({ message: "You are not authorized to update this task's status" });
                 }
-
-                console.log("đã tìm thấy\n");
 
                 // Cập nhật trạng thái task
                 const updatedTask = await Task.findByIdAndUpdate(

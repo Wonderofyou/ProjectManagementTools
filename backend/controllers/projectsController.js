@@ -99,6 +99,8 @@ const projectsController = {
                     user_id: userData.id
                 }).populate('project_id');
 
+                console.log(projects);
+
 
                 // if (projects.length > 0) {
                 //     // Các dự án sẽ được trả về với thông tin chi tiết của project
