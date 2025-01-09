@@ -40,19 +40,17 @@ const ReportPage = () => {
 
   useEffect(() => {
     if (projectId) {
-      axios.get(`/v1/tasks/get-tasks/${projectId}`)
+      axios.get(`/v1/tasks/get-tasks-for-report/${projectId}`)
         .then(response => {
-          setTasks(response.data.tasks);
-          // console.log(response.data.tasks);
+          setTasks(response.data.tasksAndMembers);
+          console.log(response.data.tasksAndMembers);
         })
         .catch(error => {
           console.error("Error fetching tasks:", error);
         });
     }
   }, [projectId]);
-  console.log(tasks)
-
-
+  // console.log(tasks)
 
   return (
     <div className="max-w-7xl mx-auto p-8 bg-gray-50 rounded-lg shadow-lg">
@@ -114,6 +112,7 @@ const ReportPage = () => {
           <table className="w-full border-collapse border border-gray-300">
             <thead>
               <tr className="bg-gray-200">
+                <th className="border border-gray-300 px-4 py-2">Teammate</th>
                 <th className="border border-gray-300 px-4 py-2">Task Name</th>
                 <th className="border border-gray-300 px-4 py-2">Status</th>
               </tr>
@@ -121,6 +120,9 @@ const ReportPage = () => {
             <tbody>
               {tasks.map((item, index) => (
                 <tr key={index}>
+                  <td className="border border-gray-300 px-4 py-2 text-center">
+                    {item.assignee_id.name}
+                  </td>
                   <td className="border border-gray-300 px-4 py-2 text-center">
                     {item.task_id.name}
                   </td>
