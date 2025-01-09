@@ -97,22 +97,21 @@ export default function ProjectsPage() {
             console.log(selectedProject);
             console.log(inviteEmail, inviteMessage, role);
 
-            response = await axios.post('v1/user/invite', {
+            await axios.post('v1/user/invite', {
                 projectId: selectedProject._id,
                 email: inviteEmail,
                 content: inviteMessage,
                 role: role,
             });
-
-            setShowNotification(true);
             setNotificationMessage("Invite sent successfully");
+            setShowNotification(true);
             setInviteEmail("");  // Xóa dữ liệu input sau khi gửi
             setInviteMessage("");
             setShowInviteForm(false);  // Ẩn form sau khi gửi mời
         } catch (error) {
             const errorMessage = error.response?.data?.message || error.message || "Unknown error occurred";
-            setShowNotification(true);
             setNotificationMessage(errorMessage);
+            setShowNotification(true);
             console.log(NotificationMessage);
             console.error("Error sending invite:", error);
         } finally {

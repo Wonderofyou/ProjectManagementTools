@@ -24,8 +24,6 @@ const tasksController = {
                     return res.status(403).json({ message: "Invalid token" });
                 }
 
-                console.log("1\n");
-
                 const { task_id } = req.params; // Lấy `task_id` từ params
                 const { status } = req.body; // Lấy `status` từ body
 
@@ -45,7 +43,6 @@ const tasksController = {
                     return res.status(403).json({ message: "You are not authorized to update this task's status" });
                 }
 
-                console.log("đã tìm thấy\n");
 
                 // Cập nhật trạng thái task
                 const updatedTask = await Task.findByIdAndUpdate(
@@ -160,15 +157,6 @@ const tasksController = {
                 }
 
                 const { project_id } = req.params;  // Changed to params from query
-                // console.log("reg parmas: ", req.params);
-                // console.log("reg body: ", req.body);
-
-                // if (!mongoose.Types.ObjectId.isValid(project_id)) {
-                //     console.log("Invalid project_id");
-                // }
-
-                // console.log("get: ", project_id);
-                // console.log("get: ", userData.id);
 
                 // Kiểm tra quyền trong dự án
                 const isMember = await ProjectMembers.findOne({ project_id, user_id: userData.id });
@@ -181,6 +169,7 @@ const tasksController = {
                 let tasks = await TaskMembers.find({
                     assignee_id: userData.id, // Điều kiện người được gán
                 }).populate('task_id');
+                console.log("Tasks: ", tasks);
 
                 // Lọc ra các task thuộc về dự án
                 tasks = tasks.filter(task =>
