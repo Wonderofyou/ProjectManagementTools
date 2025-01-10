@@ -111,6 +111,9 @@ export default function TasksPage() {
         }
     }, [selectedTask]);
 
+
+
+
     const handleConfirmDelete = async () => {
         if (!selectedTask) return; // Kiểm tra nếu không có task để xóa
 
@@ -120,7 +123,9 @@ export default function TasksPage() {
             await axios.delete(`/v1/tasks/delete-task/${selectedTask.task_id._id}`);
 
             // Xóa task khỏi danh sách
-            setTasks(tasks.filter(task => task.task_id._id !== selectedTask._id));
+            setTasks((prevTasks) =>
+                prevTasks.filter((task) => task.task_id._id !== selectedTask.task_id._id)
+            );
 
             // Hiển thị thông báo thành công
             setNotificationMessage("Task deleted successfully.");
@@ -145,6 +150,7 @@ export default function TasksPage() {
     const indexOfFirstTask = indexOfLastTask - tasksPerPage;
     const currentTasks = tasks.slice(indexOfFirstTask, indexOfLastTask);
     const totalPages = Math.ceil(tasks.length / tasksPerPage);
+
 
     return (
         <div className="p-8 bg-blue-100 min-h-screen relative">
