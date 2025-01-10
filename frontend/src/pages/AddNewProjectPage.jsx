@@ -28,11 +28,11 @@ export default function AddNewProjectPage() {
     };
 
     return (
-        <div className="max-w-full mx-auto mt-10 bg-blue-100 py-10">
-            <h1 className="text-3xl font-semibold text-gray-800 mb-6 text-center bg-white- py-4 rounded-md shadow-md">
+        <div className="max-w-full mx-auto mt-10 bg-gradient-to-r from-blue-50 to-indigo-100 py-10 px-4">
+            <h1 className="text-3xl font-semibold text-gray-800 mb-6 text-center bg-white py-4 rounded-lg shadow-xl">
                 Add New Project
             </h1>
-            <form onSubmit={handleSubmit} className="bg-white shadow-lg rounded-lg px-8 pt-6 pb-8 mb-4 max-w-4xl mx-auto">
+            <form onSubmit={handleSubmit} className="bg-white shadow-xl rounded-lg px-8 pt-6 pb-8 mb-4 max-w-4xl mx-auto">
                 <div className="flex gap-4 mb-6">
                     <div className="flex-1">
                         <label className="block text-lg font-medium text-gray-800 mb-2">Project Name</label>
@@ -41,7 +41,7 @@ export default function AddNewProjectPage() {
                             name="name"
                             value={formData.name}
                             onChange={handleChange}
-                            className="shadow-md appearance-none border-2 border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="shadow-md appearance-none border-2 border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600 transition duration-300 ease-in-out hover:border-blue-500"
                             required
                         />
                     </div>
@@ -52,7 +52,7 @@ export default function AddNewProjectPage() {
                             name="start_date"
                             value={formData.start_date}
                             onChange={handleChange}
-                            className="shadow-md appearance-none border-2 border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="shadow-md appearance-none border-2 border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600 transition duration-300 ease-in-out hover:border-blue-500"
                             required
                         />
                     </div>
@@ -63,7 +63,7 @@ export default function AddNewProjectPage() {
                             name="end_date"
                             value={formData.end_date}
                             onChange={handleChange}
-                            className="shadow-md appearance-none border-2 border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="shadow-md appearance-none border-2 border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600 transition duration-300 ease-in-out hover:border-blue-500"
                             required
                         />
                     </div>
@@ -75,7 +75,7 @@ export default function AddNewProjectPage() {
                         name="description"
                         value={formData.description}
                         onChange={handleChange}
-                        className="shadow-md appearance-none border-2 border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="shadow-md appearance-none border-2 border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600 transition duration-300 ease-in-out hover:border-blue-500"
                         required
                     />
                 </div>
@@ -86,7 +86,7 @@ export default function AddNewProjectPage() {
                         name="status"
                         value={formData.status}
                         onChange={handleChange}
-                        className="shadow-md appearance-none border-2 border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="shadow-md appearance-none border-2 border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600 transition duration-300 ease-in-out hover:border-blue-500"
                     >
                         <option value="Pending">Pending</option>
                         <option value="In Progress">In Progress</option>
@@ -96,7 +96,7 @@ export default function AddNewProjectPage() {
                 <div className="flex justify-center items-center">
                     <button
                         type="submit"
-                        className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-300"
+                        className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105"
                     >
                         Create Project
                     </button>
