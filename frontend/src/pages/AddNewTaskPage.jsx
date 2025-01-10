@@ -58,11 +58,11 @@ export default function AddNewTaskPage() {
     };
 
     return (
-        <div className="max-w-full mx-auto mt-10 bg-blue-100 py-10">
-            <h1 className="text-3xl font-semibold text-gray-800 mb-6 text-center bg-blue-100 py-4 rounded-md shadow-md">
+        <div className="max-w-full mx-auto mt-10 bg-gradient-to-r from-indigo-50 to-blue-100 py-10 px-4">
+            <h1 className="text-3xl font-semibold text-gray-800 mb-6 text-center bg-white py-4 rounded-lg shadow-xl">
                 Add New Task
             </h1>
-            <form onSubmit={handleSubmit} className="bg-white shadow-lg rounded-lg px-8 pt-6 pb-8 mb-4 max-w-4xl mx-auto">
+            <form onSubmit={handleSubmit} className="bg-white shadow-xl rounded-lg px-8 pt-6 pb-8 mb-4 max-w-4xl mx-auto">
                 <div className="flex gap-4 mb-6">
                     <div className="flex-1">
                         <label className="block text-lg font-medium text-gray-800 mb-2">Task Name</label>
@@ -71,7 +71,7 @@ export default function AddNewTaskPage() {
                             name="name"
                             value={formData.name}
                             onChange={handleChange}
-                            className="shadow-md appearance-none border-2 border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="shadow-md appearance-none border-2 border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600 transition duration-300 ease-in-out hover:border-blue-500"
                             required
                         />
                     </div>
@@ -82,7 +82,7 @@ export default function AddNewTaskPage() {
                             name="start_date"
                             value={formData.start_date}
                             onChange={handleChange}
-                            className="shadow-md appearance-none border-2 border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="shadow-md appearance-none border-2 border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600 transition duration-300 ease-in-out hover:border-blue-500"
                             required
                         />
                     </div>
@@ -93,7 +93,7 @@ export default function AddNewTaskPage() {
                             name="end_date"
                             value={formData.end_date}
                             onChange={handleChange}
-                            className="shadow-md appearance-none border-2 border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="shadow-md appearance-none border-2 border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600 transition duration-300 ease-in-out hover:border-blue-500"
                             required
                         />
                     </div>
@@ -105,7 +105,7 @@ export default function AddNewTaskPage() {
                         name="description"
                         value={formData.description}
                         onChange={handleChange}
-                        className="shadow-md appearance-none border-2 border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="shadow-md appearance-none border-2 border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600 transition duration-300 ease-in-out hover:border-blue-500"
                         required
                     />
                 </div>
@@ -116,7 +116,7 @@ export default function AddNewTaskPage() {
                         name="status"
                         value={formData.status}
                         onChange={handleChange}
-                        className="shadow-md appearance-none border-2 border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="shadow-md appearance-none border-2 border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600 transition duration-300 ease-in-out hover:border-blue-500"
                     >
                         <option value="Pending">Pending</option>
                         <option value="In Progress">In Progress</option>
@@ -130,7 +130,7 @@ export default function AddNewTaskPage() {
                         name="priority"
                         value={formData.priority}
                         onChange={handleChange}
-                        className="shadow-md appearance-none border-2 border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="shadow-md appearance-none border-2 border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600 transition duration-300 ease-in-out hover:border-blue-500"
                     >
                         <option value="Low">Low</option>
                         <option value="Medium">Medium</option>
@@ -159,7 +159,7 @@ export default function AddNewTaskPage() {
 
             {showAssignModal && (
                 <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
-                    <div className="bg-white rounded-lg shadow-lg p-6 w-1/3">
+                    <div className="bg-white rounded-lg shadow-lg p-6 w-1/3 transform transition-all duration-500 ease-in-out scale-100 hover:scale-105">
                         <h2 className="text-xl font-bold mb-4">Assign Members</h2>
                         <ul>
                             {members.map(member => (
