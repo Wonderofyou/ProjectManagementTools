@@ -175,7 +175,10 @@ const tasksController = {
                         { assignee_id: userData.id }, // Điều kiện người được gán
                         { assigned_by: userData.id } // Điều kiện người giao
                     ]
-                }).populate('task_id');
+                }).populate({
+                    path: 'task_id',         // Populate project_id trước
+                    populate: { path: 'created_by' } // Sau đó populate owner từ project_id
+                });
 
 
                 // console.log("Tasks: ", tasks);

@@ -7,3 +7,6 @@ MONGO_URL = urlmongodb
 frontend: cd frontend -> npm install -> npm run dev
 ở trong file.env của frontend, thêm vào các biến môi trường sau:
 VITE_API_BASE_URL = http://localhost:8000 (thay 8000 bằng port của backend)
+
+
+Hướng dẫn sử dụng
