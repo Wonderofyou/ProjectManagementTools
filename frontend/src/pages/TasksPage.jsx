@@ -5,7 +5,6 @@ import axios from "axios";
 export default function TasksPage() {
     const { projectId } = useParams();
     const [tasks, setTasks] = useState([]);
-    const [project, setProject] = useState(null); // State để lưu thông tin project
     const [currentPage, setCurrentPage] = useState(1);
     const [tasksPerPage] = useState(6);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -26,13 +25,12 @@ export default function TasksPage() {
     }, []);
 
     useEffect(() => {
-        axios.get(`/v1/tasks/get-project-and-user-info/${projectId}`)
+        axios.get(`/v1/tasks/get-user-info/${projectId}`)
             .then(response => {
                 setUserRole(response.data.userRole);
-                setProject(response.data.project);
             })
             .catch(error => {
-                console.error("Error fetching project and user information:", error);
+                console.error("Error  user information:", error);
             });
     }, []);
 

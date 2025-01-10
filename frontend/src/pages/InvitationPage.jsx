@@ -79,17 +79,13 @@ export default function InvitationPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-gradient-to-r from-blue-100 via-indigo-100 to-purple-100 p-8">
             {/* Header Section */}
-            <div className="bg-white border-b">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="py-6">
-                        <h1 className="text-2xl font-bold text-gray-900">My Invitations</h1>
-                        <p className="mt-1 text-sm text-gray-500">
-                            Manage your project invitations and collaborations
-                        </p>
-                    </div>
-                </div>
+            <div className="bg-white shadow-md rounded-lg mb-6 p-6">
+                <h1 className="text-3xl font-semibold text-gray-800">My Invitations</h1>
+                <p className="mt-2 text-sm text-gray-600">
+                    Manage your project invitations and collaborations
+                </p>
             </div>
 
             {/* Main Content */}
@@ -138,7 +134,7 @@ export default function InvitationPage() {
                         {invitations.length === 0 ? (
                             <div className="text-center py-12">
                                 <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 000-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
                                 </svg>
                                 <h3 className="mt-2 text-sm font-medium text-gray-900">No invitations</h3>
                                 <p className="mt-1 text-sm text-gray-500">You don't have any pending invitations at the moment.</p>

@@ -145,6 +145,41 @@ const tasksController = {
         }
     },
 
+    // Hàm cập nhật trạng thái và tiến độ dự án
+    updateStatus: async (task_id) => {
+        try {
+            const task = await Task.findOne({ _id: task_id });
+
+            // Kiểm tra nếu task không tồn tại
+            if (!task) {
+                return res.status(404).json({ message: "Task not found" });
+            }
+
+            // Nếu trạng thái đã là Completed thì không cần cập nhật
+            if (task.status === "Completed") {
+                return;
+            }
+
+            // Lấy thông tin task để kiểm tra start_date
+            const currentDate = new Date();
+            const startDate = new Date(task.start_date);
+
+            let newStatus;
+
+            // Kiểm tra start_date so với ngày hiện tại
+            if (startDate > currentDate) {
+                newStatus = 'Pending';
+            } else {
+                newStatus = 'In Progress';
+            }
+
+            // Cập nhật trạng thái của dự án
+            await Task.findByIdAndUpdate(task_id, { status: newStatus });
+        } catch (error) {
+            console.error('Error updating status:', error);
+        }
+    },
+
     // Lấy danh sách các task của người dùng
     getTasks: async (req, res) => {
         try {
@@ -197,6 +232,11 @@ const tasksController = {
 
                 // console.log("Valid tasks: ", tasks);
 
+                // Cập nhật trạng thái và tiến độ cho từng task trước khi trả về
+                for (let task of tasks) {
+                    await tasksController.updateStatus(task.task_id._id);
+                }
+
                 // Phản hồi
                 res.status(200).json({
                     message: "Tasks retrieved successfully",
@@ -209,7 +249,7 @@ const tasksController = {
         }
     },
 
-    getProjectAndUserInfo: async (req, res) => {
+    getUserInfo: async (req, res) => {
         try {
             const { token } = req.cookies;
 
@@ -231,17 +271,47 @@ const tasksController = {
                     return res.status(403).json({ message: "You are not authorized to view tasks of this project" });
                 }
 
+                // Kết hợp thông tin để phản hồi
+                res.status(200).json({
+                    userRole: userProjectRole.role,
+                });
+            });
+        } catch (error) {
+            console.error("Error getting project information:", error);
+            res.status(500).json({ message: "Internal server error" });
+        }
+    },
+
+    getProjectInfo: async (req, res) => {
+        try {
+            const { token } = req.cookies;
+
+            if (!token) {
+                return res.status(401).json({ message: "Authentication required" });
+            }
+
+            // Xác thực token
+            jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+                if (err) {
+                    return res.status(403).json({ message: "Invalid token" });
+                }
+
+                const { project_id } = req.params; // Lấy project_id từ params
+
                 // Lấy thông tin dự án
                 const project = await Project.findById(project_id);
 
+                // console.log("project: ", project);
+
                 if (!project) {
+                    // console.log("project not found");
                     return res.status(404).json({ message: "Project not found" });
                 }
 
+                // console.log("project found");
                 // Kết hợp thông tin để phản hồi
                 res.status(200).json({
                     project: project,
-                    userRole: userProjectRole.role,
                 });
             });
         } catch (error) {
