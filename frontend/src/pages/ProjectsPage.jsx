@@ -52,7 +52,7 @@ export default function ProjectsPage() {
         e.preventDefault();
         setSelectedProject(project);
         setShowDeleteModal(true);
-        console.log("Selected delete project:", selectedProject);
+        // console.log("Selected delete project:", selectedProject);
     };
 
     const handleInviteMessageChange = (e) => {

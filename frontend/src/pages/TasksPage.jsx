@@ -10,19 +10,19 @@ export default function TasksPage() {
     const [tasksPerPage] = useState(6);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
+    const [showNotification, setShowNotification] = useState(false);
+    const [NotificationMessage, setNotificationMessage] = useState("");
 
     useEffect(() => {
-        if (projectId) {
-            axios.get(`/v1/tasks/get-tasks/${projectId}`)
-                .then(response => {
-                    setTasks(response.data.tasks);
-                    // console.log(response.data.tasks);
-                })
-                .catch(error => {
-                    console.error("Error fetching tasks:", error);
-                });
-        }
-    }, [projectId]);
+        axios.get(`/v1/tasks/get-tasks/${projectId}`)
+            .then(response => {
+                setTasks(response.data.tasks);
+                // console.log(response.data.tasks);
+            })
+            .catch(error => {
+                console.error("Error fetching tasks:", error);
+            });
+    }, []);
 
     const handleStatusChange = async (task, newStatus) => {
         try {
@@ -109,15 +109,15 @@ export default function TasksPage() {
         if (selectedTask) {
             console.log("Selected task has changed:", selectedTask);
         }
-    }, [selectedProject]);
+    }, [selectedTask]);
 
     const handleConfirmDelete = async () => {
         if (!selectedTask) return; // Kiểm tra nếu không có task để xóa
 
         try {
-            console.log(selectedTask);
+            console.log("Task to be deleted", selectedTask);
             // Gọi API xóa task
-            await axios.delete(`/v1/tasks/delete-task/${selectedTask._id}`);
+            await axios.delete(`/v1/tasks/delete-task/${selectedTask.task_id._id}`);
 
             // Xóa task khỏi danh sách
             setTasks(tasks.filter(task => task.task_id._id !== selectedTask._id));

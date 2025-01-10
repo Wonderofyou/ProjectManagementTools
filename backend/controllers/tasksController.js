@@ -117,6 +117,10 @@ const tasksController = {
                     end_date: end_date || new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
                 });
 
+                // console.log("task name: \n", name);
+                // console.log("task id: \n", newTask._id);
+                // console.log("assinged memebers: \n", assigned_members);
+
                 // Ghi nhận các thành viên được assign vào bảng TaskMembers
                 if (Array.isArray(assigned_members) && assigned_members.length > 0) {
                     const taskMembersData = assigned_members.map(memberId => ({
@@ -124,6 +128,7 @@ const tasksController = {
                         assignee_id: memberId,
                         assigned_by: userData.id,
                     }));
+
 
                     await TaskMembers.insertMany(taskMembersData);
                 }
