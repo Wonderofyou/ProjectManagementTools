@@ -100,10 +100,24 @@ const projectsController = {
             // Cập nhật tiến độ của dự án
             await Project.findByIdAndUpdate(projectId, { progress });
 
-            // Cập nhật trạng thái dự án nếu tiến độ đạt 100%
-            let newStatus = progress === 100 ? 'Completed' : 'In Progress';
-            await Project.findByIdAndUpdate(projectId, { status: newStatus });
+            // Lấy thông tin dự án để kiểm tra start_date
+            const project = await Project.findById(projectId);
+            const currentDate = new Date();
+            const startDate = new Date(project.start_date);
 
+            let newStatus;
+
+            // Kiểm tra start_date so với ngày hiện tại
+            if (progress === 100) {
+                newStatus = 'Completed';
+            } else if (startDate > currentDate) {
+                newStatus = 'Pending';
+            } else {
+                newStatus = 'In Progress';
+            }
+
+            // Cập nhật trạng thái của dự án
+            await Project.findByIdAndUpdate(projectId, { status: newStatus });
         } catch (error) {
             console.error('Error updating status and progress:', error);
         }
@@ -129,14 +143,6 @@ const projectsController = {
                 const projects = await ProjectMembers.find({
                     user_id: userData.id
                 }).populate('project_id');
-
-
-                // if (projects.length > 0) {
-                //     // Các dự án sẽ được trả về với thông tin chi tiết của project
-                //     console.log(projects);
-                // } else {
-                //     console.log('No projects found for this user.');
-                // }
 
                 // Cập nhật trạng thái và tiến độ cho từng dự án trước khi trả về
                 for (let projectMember of projects) {
