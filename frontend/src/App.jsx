@@ -42,6 +42,8 @@ function App() {
           <Route path="/report/:projectId" element={<ReportPage />} />
           <Route path="/edit-profile" element={<EditprofilePage />} />
         </Route>
+        <Route index element={<IndexPage />} />
+
 
 
       </Routes>
