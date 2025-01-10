@@ -52,7 +52,7 @@ export default function ProjectsPage() {
         e.preventDefault();
         setSelectedProject(project);
         setShowDeleteModal(true);
-        console.log("Selected delete project:", selectedProject);
+        // console.log("Selected delete project:", selectedProject);
     };
 
     const handleInviteMessageChange = (e) => {
@@ -83,6 +83,7 @@ export default function ProjectsPage() {
             setSelectedProject(null);
         }
     };
+
     const handleInviteClick = (e, project) => {
         e.preventDefault();
         setSelectedProject(project);  // Lưu toàn bộ object project thay vì chỉ projectId

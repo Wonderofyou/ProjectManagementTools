@@ -9,20 +9,20 @@ export default function TasksPage() {
     const [currentPage, setCurrentPage] = useState(1);
     const [tasksPerPage] = useState(6);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [taskToDelete, setTaskToDelete] = useState(null);
+    const [selectedTask, setSelectedTask] = useState(null);
+    const [showNotification, setShowNotification] = useState(false);
+    const [NotificationMessage, setNotificationMessage] = useState("");
 
     useEffect(() => {
-        if (projectId) {
-            axios.get(`/v1/tasks/get-tasks/${projectId}`)
-                .then(response => {
-                    setTasks(response.data.tasks);
-                    // console.log(response.data.tasks);
-                })
-                .catch(error => {
-                    console.error("Error fetching tasks:", error);
-                });
-        }
-    }, [projectId]);
+        axios.get(`/v1/tasks/get-tasks/${projectId}`)
+            .then(response => {
+                setTasks(response.data.tasks);
+                // console.log(response.data.tasks);
+            })
+            .catch(error => {
+                console.error("Error fetching tasks:", error);
+            });
+    }, []);
 
     const handleStatusChange = async (task, newStatus) => {
         try {
@@ -98,15 +98,49 @@ export default function TasksPage() {
 
     const handleDeleteClick = (e, task) => {
         e.preventDefault();
-        setTaskToDelete(task);
+        setSelectedTask(task);
         setShowDeleteModal(true);
     };
 
-    const handleConfirmDelete = () => {
-        // console.log("Deleting task:", taskToDelete);
-        setShowDeleteModal(false);
-        setTaskToDelete(null);
+    useEffect(() => {
+        // Kiểm tra khi selectedProject thay đổi
+        if (selectedTask) {
+            console.log("Selected task has changed:", selectedTask);
+        }
+    }, [selectedTask]);
+
+
+
+
+    const handleConfirmDelete = async () => {
+        if (!selectedTask) return; // Kiểm tra nếu không có task để xóa
+
+        try {
+            console.log("Task to be deleted", selectedTask);
+            // Gọi API xóa task
+            await axios.delete(`/v1/tasks/delete-task/${selectedTask.task_id._id}`);
+
+            // Xóa task khỏi danh sách
+            setTasks((prevTasks) =>
+                prevTasks.filter((task) => task.task_id._id !== selectedTask.task_id._id)
+            );
+
+            // Hiển thị thông báo thành công
+            setNotificationMessage("Task deleted successfully.");
+            setShowNotification(true);
+            console.log(NotificationMessage);
+        } catch (error) {
+            // Lấy thông báo lỗi nếu xảy ra
+            const errorMessage = error.response?.data?.message || error.message || "Unknown error occurred";
+            setNotificationMessage(errorMessage);
+            setShowNotification(true);
+        } finally {
+            // Đóng modal xóa sau khi hoàn thành
+            setShowDeleteModal(false);
+            setSelectedTask(null);
+        }
     };
+
 
 
 
@@ -114,6 +148,7 @@ export default function TasksPage() {
     const indexOfFirstTask = indexOfLastTask - tasksPerPage;
     const currentTasks = tasks.slice(indexOfFirstTask, indexOfLastTask);
     const totalPages = Math.ceil(tasks.length / tasksPerPage);
+
 
     return (
         <div className="p-8 bg-blue-100 min-h-screen relative">
@@ -144,12 +179,12 @@ export default function TasksPage() {
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             // Đóng menu nếu đang mở, ngược lại thì mở menu
-                                            setTaskToDelete(taskToDelete === task ? null : task);
+                                            setSelectedTask(selectedTask === task ? null : task);
                                         }}
                                     >
                                         {task.task_id.status}
                                     </button>
-                                    {taskToDelete === task && (
+                                    {selectedTask === task && (
                                         <div
                                             className="absolute bg-white border rounded shadow-lg mt-2 z-50"
                                             style={{ minWidth: "150px" }}
@@ -160,7 +195,7 @@ export default function TasksPage() {
                                                     className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-200"
                                                     onClick={() => {
                                                         handleStatusChange(task, status);
-                                                        setTaskToDelete(null); // Đóng menu sau khi chọn
+                                                        setSelectedTask(null); // Đóng menu sau khi chọn
                                                     }}
                                                 >
                                                     {status}

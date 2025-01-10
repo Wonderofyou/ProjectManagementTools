@@ -117,6 +117,10 @@ const tasksController = {
                     end_date: end_date || new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
                 });
 
+                // console.log("task name: \n", name);
+                // console.log("task id: \n", newTask._id);
+                // console.log("assinged memebers: \n", assigned_members);
+
                 // Ghi nhận các thành viên được assign vào bảng TaskMembers
                 if (Array.isArray(assigned_members) && assigned_members.length > 0) {
                     const taskMembersData = assigned_members.map(memberId => ({
@@ -124,6 +128,7 @@ const tasksController = {
                         assignee_id: memberId,
                         assigned_by: userData.id,
                     }));
+
 
                     await TaskMembers.insertMany(taskMembersData);
                 }
@@ -292,6 +297,56 @@ const tasksController = {
             res.status(500).json({ message: "Internal server error" });
         }
     },
+
+    deleteTask: async (req, res) => {
+        try {
+            const { token } = req.cookies;
+
+            if (!token) {
+                return res.status(401).json({ message: "Authentication required" });
+            }
+
+            // Xác thực token
+            jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+                if (err) {
+                    return res.status(403).json({ message: "Invalid token" });
+                }
+
+                const { task_id } = req.params; // Lấy task_id từ params
+
+                // Lây thông tin về từ task dựa vào task_id
+                const taskToBeDeleted = await Task.findById(task_id);
+
+                if (!taskToBeDeleted) {
+                    return res.status(404).json({ message: "Task not found" });
+                }
+
+                // Kiểm tra xem người dùng có quyền xóa task không
+                // Chỉ có người tạo ra task mới được xóa task
+                const isCreatorOfTask = await Task.findOne({
+                    project_id: taskToBeDeleted.project_id,
+                    created_by: userData.id,
+                });
+
+                if (!isCreatorOfTask) {
+                    return res.status(403).json({ message: "You are not authorized to delete this task" });
+                }
+
+                // Xóa các bản ghi liên quan trong TaskMembers
+                await TaskMembers.deleteMany({ task_id: task_id });
+
+                // Xóa task
+                await Task.findByIdAndDelete(task_id);
+
+                res.status(200).json({ message: "Task deleted successfully" });
+            });
+        } catch (error) {
+            console.error("Error deleting task:", error);
+            res.status(500).json({ message: "Internal server error" });
+        }
+    }
+
+
 };
 
 module.exports = tasksController;

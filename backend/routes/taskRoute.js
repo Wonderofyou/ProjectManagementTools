@@ -7,5 +7,5 @@ router.get('/get-tasks/:project_id', tasksController.getTasks);
 router.get('/get-tasks-for-report/:project_id', tasksController.getTasksForReport);
 router.get('/get-members-in-project/:project_id', tasksController.getMembersInProject);
 router.put('/update-status/:task_id', tasksController.updateTaskStatus);
-
+router.delete('/delete-task/:task_id', tasksController.deleteTask);
 module.exports = router;
