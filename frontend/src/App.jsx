@@ -40,6 +40,8 @@ function App() {
           <Route path="/report" element={<ReportsListPage />} />
           <Route path="/report/:projectId" element={<ReportPage />} />
         </Route>
+        <Route index element={<IndexPage />} />
+
 
 
       </Routes>
