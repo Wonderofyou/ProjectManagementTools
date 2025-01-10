@@ -209,6 +209,48 @@ const tasksController = {
         }
     },
 
+    getProjectAndUserInfo: async (req, res) => {
+        try {
+            const { token } = req.cookies;
+
+            if (!token) {
+                return res.status(401).json({ message: "Authentication required" });
+            }
+
+            // Xác thực token
+            jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+                if (err) {
+                    return res.status(403).json({ message: "Invalid token" });
+                }
+
+                const { project_id } = req.params; // Lấy project_id từ params
+
+                // Kiểm tra quyền truy cập dự án và vai trò người dùng
+                const userProjectRole = await ProjectMembers.findOne({ project_id: project_id, user_id: userData.id });
+                if (!userProjectRole) {
+                    return res.status(403).json({ message: "You are not authorized to view tasks of this project" });
+                }
+
+                // Lấy thông tin dự án
+                const project = await Project.findById(project_id);
+
+                if (!project) {
+                    return res.status(404).json({ message: "Project not found" });
+                }
+
+                // Kết hợp thông tin để phản hồi
+                res.status(200).json({
+                    project: project,
+                    userRole: userProjectRole.role,
+                });
+            });
+        } catch (error) {
+            console.error("Error getting project information:", error);
+            res.status(500).json({ message: "Internal server error" });
+        }
+    },
+
+
     // Lấy danh sách các task để hiện thể trên trang report
     getTasksForReport: async (req, res) => {
         try {

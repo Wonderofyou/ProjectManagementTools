@@ -5,12 +5,15 @@ import axios from "axios";
 export default function TasksPage() {
     const { projectId } = useParams();
     const [tasks, setTasks] = useState([]);
+    const [project, setProject] = useState(null); // State để lưu thông tin project
     const [currentPage, setCurrentPage] = useState(1);
     const [tasksPerPage] = useState(6);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
     const [showNotification, setShowNotification] = useState(false);
     const [NotificationMessage, setNotificationMessage] = useState("");
+    const [userRole, setUserRole] = useState('');
+
 
     useEffect(() => {
         axios.get(`/v1/tasks/get-tasks/${projectId}`)
@@ -19,6 +22,17 @@ export default function TasksPage() {
             })
             .catch(error => {
                 console.error("Error fetching tasks:", error);
+            });
+    }, []);
+
+    useEffect(() => {
+        axios.get(`/v1/tasks/get-project-and-user-info/${projectId}`)
+            .then(response => {
+                setUserRole(response.data.userRole);
+                setProject(response.data.project);
+            })
+            .catch(error => {
+                console.error("Error fetching project and user information:", error);
             });
     }, []);
 
@@ -201,17 +215,19 @@ export default function TasksPage() {
                 </button>
             </div>
 
-            <div className="text-center mt-8">
-                <Link
-                    to={`/projects/${projectId}/tasks/new`}
-                    className="inline-flex items-center gap-2 px-6 py-3 bg-black text-white rounded-full hover:bg-gray-800"
-                >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-                    </svg>
-                    Add new task
-                </Link>
-            </div>
+            {userRole === 'admin' && (
+                <div className="text-center mt-8">
+                    <Link
+                        to={`/projects/${projectId}/tasks/new`}
+                        className="inline-flex items-center gap-2 px-6 py-3 bg-black text-white rounded-full hover:bg-gray-800"
+                    >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                        Add new task
+                    </Link>
+                </div>
+            )}
         </div>
     );
 }
