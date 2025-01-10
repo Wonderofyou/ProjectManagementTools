@@ -83,6 +83,7 @@ export default function ProjectsPage() {
             setSelectedProject(null);
         }
     };
+
     const handleInviteClick = (e, project) => {
         e.preventDefault();
         setSelectedProject(project);  // Lưu toàn bộ object project thay vì chỉ projectId
