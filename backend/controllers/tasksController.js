@@ -166,8 +166,12 @@ const tasksController = {
 
                 // Lấy danh sách các task mà người dùng tham gia
                 let tasks = await TaskMembers.find({
-                    assignee_id: userData.id
+                    $or: [
+                        { assignee_id: userData.id }, // Điều kiện người được gán
+                        { assigned_by: userData.id } // Điều kiện người giao
+                    ]
                 }).populate('task_id');
+
 
                 // console.log("Tasks: ", tasks);
 
