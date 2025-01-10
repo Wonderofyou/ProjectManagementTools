@@ -5,6 +5,7 @@ const Invitation = require("../models/Invitations");
 const Notification = require("../models/Notifications");
 const UserNotification = require("../models/UserNotifications");
 const bcrypt = require("bcrypt");
+const salt = bcrypt.genSaltSync(10);
 const jwt = require("jsonwebtoken");
 
 require('dotenv').config()
@@ -16,16 +17,44 @@ const userController = {
     const { token } = req.cookies;
     if (token) {
       jwt.verify(token, jwtSecret, {}, async (err, userData) => {
-        if (err) throw err;
-        const { name, email, _id } = await User.findByIdAndUpdate(userData.id,
-          { name: req.body.name, email: req.body.email },
-          { new: true });
-        res.json({ name, email, _id });
+        if (err) return res.status(401).json({ error: 'Unauthorized' });
+
+        const updateData = {
+          name: req.body.name,
+          email: req.body.email,
+        };
+
+        // Nếu có mật khẩu trong body thì hash mật khẩu và thêm vào dữ liệu cập nhật
+        if (req.body.oldpassword) {
+          const password = req.body.oldpassword;
+          const user = await User.findById(userData.id);
+
+          const passOk = bcrypt.compareSync(password, user.password);
+          if (!passOk) {
+            return res.status(401).json({ error: "Wrong password" }); // Return immediately if password is wrong
+          }
+
+          updateData.password = bcrypt.hashSync(req.body.password, salt);
+        }
+
+        try {
+          const updatedUser = await User.findByIdAndUpdate(
+            userData.id,
+            updateData,
+            { new: true }
+          );
+          const { name, email, _id } = updatedUser;
+          res.json({ name, email, _id });
+        } catch (err) {
+          res.status(500).json({ error: 'Failed to update profile' });
+        }
       });
     } else {
-      res.json(null);
+      res.status(401).json({ error: 'No token provided' });
     }
   },
+
+
 
   // mời người khác vòa dự án 
   sendInvite: async (req, res) => {
