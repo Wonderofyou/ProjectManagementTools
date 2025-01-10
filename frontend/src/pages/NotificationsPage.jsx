@@ -14,7 +14,10 @@ export default function NotificationsPage() {
   const fetchNotifications = async () => {
     try {
       const response = await axios.get("/v1/user/notifications");
-      setNotifications(response.data.notifications); 
+      const sortedNotifications = response.data.notifications.sort((a, b) =>
+        new Date(b.notification_id.created_at) - new Date(a.notification_id.created_at) // Sắp xếp theo thời gian giảm dần
+      );
+      setNotifications(sortedNotifications);
     } catch (error) {
       console.error("Failed to fetch notifications:", error);
     }
@@ -51,19 +54,19 @@ export default function NotificationsPage() {
   };
 
   return (
-    <div className="container mx-auto p-6 max-w-4xl">
-      <h1 className="text-3xl font-semibold text-gray-800 mb-6">Your Notifications</h1>
+    <div className="p-8 bg-gradient-to-r from-blue-100 via-indigo-100 to-purple-100 min-h-screen">
+      <h1 className="text-4xl font-semibold text-gray-800 mb-8">Your Notifications</h1>
 
-      <div className="space-y-4">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {notifications.length === 0 ? (
-          <div className="p-4 text-center text-gray-500">
+          <div className="p-4 text-center text-gray-500 col-span-3">
             You don't have any notifications yet.
           </div>
         ) : (
           notifications.map((notification) => (
             <div
               key={notification._id}
-              className={`p-4 border rounded-lg shadow-sm transition-colors duration-300 ${
+              className={`p-6 bg-white rounded-xl shadow-lg hover:shadow-2xl transition duration-300 ease-in-out transform hover:scale-105 ${
                 notification.read_status ? "bg-gray-200" : "bg-blue-100"
               }`}
               onClick={() => markAsRead(notification._id)}
@@ -84,28 +87,25 @@ export default function NotificationsPage() {
                 </div>
               </div>
 
-              {notification.notification_id  && (
+              {notification.notification_id && (
                 <div className="mt-2 text-gray-700 italic">
-                  You are invited to project {" "}
+                  You are invited to project{" "}
                   <strong>{notification.notification_id.content || "No project name"}</strong>
                 </div>
               )}
-            {/* add content of notification */}
-            
-            {/* add day ago when notification is created */}
 
               <div className="flex justify-between items-center mt-2">
                 <button
-                  className="text-red-600 hover:text-red-800 focus:outline-none"
+                  className="text-red-500 hover:text-red-700 focus:outline-none"
                   onClick={(e) => {
                     e.stopPropagation();
                     deleteNotification(notification._id);
                   }}
                 >
-                  <TrashIcon className="h-5 w-5 text-red-600" />
+                  <TrashIcon className="h-5 w-5 text-red-500" />
                 </button>
                 {notification.read_status ? (
-                  <CheckCircleIcon className="h-5 w-5 text-green-600" />
+                  <CheckCircleIcon className="h-5 w-5 text-green-500" />
                 ) : (
                   <span className="text-sm text-blue-600">New</span>
                 )}
