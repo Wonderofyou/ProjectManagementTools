@@ -7,5 +7,6 @@ router.get('/get-projects', projectsController.getProjects);
 router.get('/get-project/:projectId', projectsController.getProject);
 router.delete('/delete-project/:projectId', projectsController.deleteProject);
 
+router.get('/get-project-members/:projectId', projectsController.getProjectMembers);
 
 module.exports = router;

@@ -153,6 +153,7 @@ const projectsController = {
             res.status(500).json({ message: 'Internal server error' });
         }
     },
+
     //get a project
     getProject: async (req, res) => {
         try {
@@ -243,6 +244,57 @@ const projectsController = {
             res.status(500).json({ message: 'Internal server error' });
         }
     },
+
+    // Lấy danh sách thành viên trong dự án
+    getProjectMembers: async (req, res) => {
+        try {
+            const { token } = req.cookies;
+
+            if (!token) {
+                return res.status(401).json({ message: 'Authentication required' });
+            }
+
+            // Xác thực token
+            jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+                if (err) {
+                    return res.status(403).json({ message: 'Invalid token' });
+                }
+
+                const { projectId } = req.params;
+
+                // Kiểm tra xem dự án có tồn tại không
+                const project = await Project.findById(projectId);
+                if (!project) {
+                    return res.status(404).json({ message: 'Project not found' });
+                }
+
+                // Lấy danh sách thành viên từ ProjectMembers
+                let projectMembers = await ProjectMembers.find({ project_id: projectId })
+                    .populate('user_id');
+
+                // Sử dụng filter để loại bỏ các bản ghi trùng lặp
+                const seenUserIds = new Set();
+
+                projectMembers = projectMembers.filter(member => {
+                    const userId = member.user_id._id.toString(); // Chuyển ObjectId sang chuỗi
+                    if (seenUserIds.has(userId)) {
+                        return false; // Bỏ qua nếu đã tồn tại trong Set
+                    }
+                    seenUserIds.add(userId); // Thêm userId vào Set
+                    return true; // Giữ lại nếu chưa xuất hiện
+                });
+
+                // Trả về danh sách thành viên
+                res.status(200).json({
+                    projectMembers: projectMembers,
+                });
+            });
+        } catch (error) {
+            console.error('Error getting project members:', error);
+            res.status(500).json({ message: 'Internal server error' });
+        }
+    },
+
 };
 
 module.exports = projectsController;

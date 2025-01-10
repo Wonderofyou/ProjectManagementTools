@@ -37,11 +37,7 @@ export default function ProjectsPage() {
         }
     };
 
-    const handleDeleteClick = (e, project) => {
-        e.preventDefault();
-        setSelectedProject(project);
-        setShowDeleteModal(true);
-    };
+
 
     const handleInviteMessageChange = (e) => {
         setInviteMessage(e.target.value);
@@ -68,9 +64,18 @@ export default function ProjectsPage() {
 
     const handleInviteClick = (e, project) => {
         e.preventDefault();
-        setSelectedProject(project);
-        setShowInviteForm(true);
+        setSelectedProject(project);  // Lưu toàn bộ object project thay vì chỉ projectId
+        setShowInviteForm(true);  // Hiển thị form invite
+        console.log("Selected project:", selectedProject);
     };
+
+    const handleDeleteClick = (e, project) => {
+        e.preventDefault();
+        setSelectedProject(project);
+        setShowDeleteModal(true);
+        // console.log("Selected delete project:", selectedProject);
+    };
+
 
     const handleInviteSubmit = async (e) => {
         e.preventDefault();
@@ -123,9 +128,16 @@ export default function ProjectsPage() {
                             <div className="bg-blue-500 h-2.5 rounded-full transition-all duration-300" style={{ width: `${project.project_id.progress || 0}%` }}></div>
                         </div>
 
-                        <div className="mt-4">
-                            <p className="text-gray-400">Deadline: {new Date(project.project_id.end_date).toLocaleDateString()}</p>
+                        <div className="flex justify-between items-center">
+                            <div>
+                                <p className="text-red-500">
+                                    Deadline: {new Date(project.project_id.end_date).toLocaleDateString()}
+                                </p>
+                            </div>
                         </div>
+
+
+
 
                         <div className="flex justify-between items-center mt-4">
                             <Link
