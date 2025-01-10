@@ -15,6 +15,7 @@ import AddNewProjectPage from "./pages/AddNewProjectPage.jsx";
 import ReportPage from './pages/ReportPage.jsx';
 import ReportsListPage from './pages/ReportsListPage.jsx';
 import NotificationsPage from './pages/NotificationsPage.jsx';
+import Workspace from './pages/WorkSpace.jsx';
 
 
 
@@ -37,6 +38,7 @@ function App() {
           <Route path='/projects/new' element={<AddNewProjectPage />} />
           <Route path="/projects/:projectId/tasks" element={<TasksPage />} />
           <Route path="/projects/:projectId/tasks/new" element={<AddNewTaskPage />} />
+          <Route path="/projects/:projectId/tasks/:taskId" element={<Workspace />} />
           <Route path="/report" element={<ReportsListPage />} />
           <Route path="/report/:projectId" element={<ReportPage />} />
         </Route>
