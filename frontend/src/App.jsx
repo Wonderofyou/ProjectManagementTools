@@ -15,6 +15,7 @@ import AddNewProjectPage from "./pages/AddNewProjectPage.jsx";
 import ReportPage from './pages/ReportPage.jsx';
 import ReportsListPage from './pages/ReportsListPage.jsx';
 import NotificationsPage from './pages/NotificationsPage.jsx';
+import EditprofilePage from './pages/EditProfilePage.jsx';
 
 
 
@@ -39,6 +40,7 @@ function App() {
           <Route path="/projects/:projectId/tasks/new" element={<AddNewTaskPage />} />
           <Route path="/report" element={<ReportsListPage />} />
           <Route path="/report/:projectId" element={<ReportPage />} />
+          <Route path="/edit-profile" element={<EditprofilePage />} />
         </Route>
 
 

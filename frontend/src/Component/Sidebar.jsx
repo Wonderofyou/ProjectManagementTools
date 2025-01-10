@@ -7,6 +7,9 @@ import { AiOutlineTeam, AiOutlineBell } from "react-icons/ai";
 import { FiMessageSquare, FiFolder } from "react-icons/fi";
 import { GoProject } from "react-icons/go";
 import { Link } from "react-router-dom";
+import { VscAccount } from "react-icons/vsc";
+
+
 
 const Sidebar = () => {
     const menus = [
@@ -17,11 +20,8 @@ const Sidebar = () => {
         { name: "File Manager", link: "/file", icon: FiFolder },
         { name: "Project", link: "/projects", icon: GoProject },
         { name: "Setting", link: "/setting", icon: RiSettings4Line },
-        {
-            name: "Notifications",
-            link: "/notifications", // Không có link, dùng để hiển thị dropdown
-            icon: AiOutlineBell,
-        },
+        { name: "Notifications", link: "/notifications", icon: AiOutlineBell, },
+        { name: "Profile", link: "/edit-profile", icon: VscAccount }
     ];
 
     const [open, setOpen] = useState(true);
