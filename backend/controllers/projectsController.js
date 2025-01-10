@@ -153,6 +153,36 @@ const projectsController = {
             res.status(500).json({ message: 'Internal server error' });
         }
     },
+    //get a project
+    getProject: async (req, res) => {
+        try {
+            const { token } = req.cookies;
+            if (!token) {
+                return res.status(401).json({ message: 'Authentication required' });
+            }
+            jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+                if (err) {
+                    return res.status(403).json({ message: 'Invalid token' });
+                }
+
+                const { projectId } = req.params;
+                const project = await ProjectMembers.findOne({
+                    user_id: userData.id,
+                    project_id: projectId
+                })
+                    .populate({
+                        path: 'project_id',         // Populate project_id trước
+                        populate: { path: 'owner_id' } // Sau đó populate owner từ project_id
+                    });
+                res.status(200).json({ project });
+            });
+        }
+        catch (error) {
+            console.error('Error getting project:', error);
+            res.status(500).json({ message: 'Internal server error' });
+        }
+
+    },
 
     deleteProject: async (req, res) => {
         try {
@@ -213,10 +243,6 @@ const projectsController = {
             res.status(500).json({ message: 'Internal server error' });
         }
     },
-
-
-
-
 };
 
 module.exports = projectsController;
