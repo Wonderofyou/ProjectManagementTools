@@ -17,9 +17,6 @@ export default function ProjectsPage() {
     const [showNotification, setShowNotification] = useState(false);
     const [NotificationMessage, setNotificationMessage] = useState("");
 
-
-
-
     useEffect(() => {
         axios.get('v1/projects/get-projects').then(response => {
             setProjects(response.data.projects);
@@ -48,12 +45,7 @@ export default function ProjectsPage() {
         }
     };
 
-    const handleDeleteClick = (e, project) => {
-        e.preventDefault();
-        setSelectedProject(project);
-        setShowDeleteModal(true);
-        // console.log("Selected delete project:", selectedProject);
-    };
+
 
     const handleInviteMessageChange = (e) => {
         setInviteMessage(e.target.value);  // Update invite message
@@ -90,6 +82,14 @@ export default function ProjectsPage() {
         setShowInviteForm(true);  // Hiển thị form invite
         console.log("Selected project:", selectedProject);
     };
+
+    const handleDeleteClick = (e, project) => {
+        e.preventDefault();
+        setSelectedProject(project);
+        setShowDeleteModal(true);
+        // console.log("Selected delete project:", selectedProject);
+    };
+
 
     const handleInviteSubmit = async (e) => {
         e.preventDefault();
@@ -164,6 +164,9 @@ export default function ProjectsPage() {
                                     </p>
                                 </div>
                             </div>
+
+
+
 
                             {/* Invite button */}
                             <div className="absolute bottom-1 right-14 ">
