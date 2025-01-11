@@ -9,7 +9,7 @@ export default function AddNewProjectPage() {
         description: '',
         start_date: '',
         end_date: '',
-        status: 'Pending',
+        status: 'Pending', // Default status is 'Pending'
     });
 
     const handleChange = (e) => {
@@ -43,19 +43,13 @@ export default function AddNewProjectPage() {
         }
 
         // Xử lý logic nếu không có lỗi
-        const currentDate = new Date();
-        const updatedStatus = startDate >= currentDate ? 'Pending' : 'In Progress';
-        const updatedFormData = { ...formData, status: updatedStatus };
-
-        axios.post('v1/projects/create-project', updatedFormData).then(() => {
-            console.log(updatedFormData);
+        axios.post('v1/projects/create-project', formData).then(() => {
+            console.log(formData);
             navigate('/projects');
         }).catch(error => {
             console.error("Error creating project:", error);
         });
     };
-
-
 
     return (
         <div className="max-w-full mx-auto mt-10 bg-gradient-to-r from-blue-50 to-indigo-100 py-10 px-4">
@@ -114,14 +108,17 @@ export default function AddNewProjectPage() {
 
                 <div className="mb-6">
                     <label className="block text-lg font-medium text-gray-800 mb-2">Status</label>
-                    <input
-                        type="text"
-                        value={formData.start_date ? (new Date(formData.start_date) >= new Date() ? 'Pending' : 'In Progress') : ''}
-                        className="shadow-md appearance-none border-2 border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 bg-gray-100"
-                        readOnly
-                    />
+                    <select
+                        name="status"
+                        value={formData.status}
+                        onChange={handleChange}
+                        className="shadow-md appearance-none border-2 border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600 transition duration-300 ease-in-out hover:border-blue-500"
+                    >
+                        <option value="Pending">Pending</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Completed">Completed</option>
+                    </select>
                 </div>
-
 
                 <div className="flex justify-center items-center">
                     <button

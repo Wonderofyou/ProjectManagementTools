@@ -10,7 +10,7 @@ export default function AddNewTaskPage() {
         description: '',
         start_date: '',
         end_date: '',
-        status: 'Pending',
+        status: 'In Progress', // Default value, can be changed by the user
         priority: 'Low',
         assigned_members: [], // Add assigned_members field
     });
@@ -30,7 +30,6 @@ export default function AddNewTaskPage() {
             axios.get(`/v1/tasks/get-members-in-project/${projectId}`)
                 .then(response => {
                     setMembers(response.data.members);
-                    // console.log(response.data.members);
                 })
                 .catch(error => {
                     console.error("Error fetching members in project:", error);
@@ -52,8 +51,6 @@ export default function AddNewTaskPage() {
         const { name, value } = e.target;
         const updatedFormData = { ...formData, [name]: value };
 
-        console.log("in change: ", project);
-
         if (name === 'start_date' || name === 'end_date') {
             const startDate = new Date(updatedFormData.start_date);
             const endDate = new Date(updatedFormData.end_date);
@@ -61,41 +58,36 @@ export default function AddNewTaskPage() {
             // Kiểm tra lỗi: end_date phải lớn hơn hoặc bằng start_date
             if (startDate && endDate && endDate < startDate) {
                 setError1('End date must be greater than or equal to start date.');
-                console.log("error1");
             } else {
-                setError1(''); // Xóa lỗi nếu hợp lệ
+                setError1('');
             }
 
             // Kiểm tra lỗi: start date của task phải lớn hơn hoặc bằng start_date của project
             if (startDate && endDate && startDate < new Date(project.start_date)) {
                 setError2('Start date of task must be greater than or equal to start date of project.');
-                console.log("error2");
             } else {
-                setError2(''); // Xóa lỗi nếu hợp lệ
+                setError2('');
             }
 
             // Kiểm tra lỗi: end date của task phải bé hơn hoặc bằng end_date của project
             if (startDate && endDate && endDate > new Date(project.end_date)) {
                 setError3('End date of task must be smaller than or equal to end date of project.');
-                console.log("error3");
             } else {
-                setError3(''); // Xóa lỗi nếu hợp lệ
+                setError3('');
             }
 
             // Kiểm tra lỗi: start date của task phải be hơn hoặc bằng end_date của project
             if (startDate && endDate && startDate > new Date(project.end_date)) {
-                setError4('End date of task must be smaller than or equal to end date of project.');
-                console.log("error4");
+                setError4('Start date of task must be smaller than or equal to end date of project.');
             } else {
-                setError4(''); // Xóa lỗi nếu hợp lệ
+                setError4('');
             }
 
             // Kiểm tra lỗi: end date của task phải lớn hơn hoặc bằng start_date của project
             if (startDate && endDate && endDate < new Date(project.start_date)) {
                 setError5('End date of task must be greater than or equal to start date of project.');
-                console.log("error5");
             } else {
-                setError5(''); // Xóa lỗi nếu hợp lệ
+                setError5('');
             }
         }
 
@@ -117,14 +109,13 @@ export default function AddNewTaskPage() {
         const startDate = new Date(formData.start_date);
         const endDate = new Date(formData.end_date);
 
+        // Kiểm tra lỗi về ngày tháng
         if (endDate < startDate || startDate < project.start_date || endDate > project.end_date) {
             return;
         }
 
         // Xử lý logic nếu không có lỗi
-        const currentDate = new Date();
-        const updatedStatus = startDate >= currentDate ? 'Pending' : 'In Progress';
-        const updatedFormData = { ...formData, status: updatedStatus };
+        const updatedFormData = { ...formData };
 
         axios.post(`/v1/tasks/create-task/${projectId}`, updatedFormData)
             .then(() => {
@@ -165,6 +156,8 @@ export default function AddNewTaskPage() {
                         />
                         {error2 && <p className="text-red-500 text-sm mt-1">{error2}</p>}
                         {error4 && <p className="text-red-500 text-sm mt-1">{error4}</p>}
+                        {/* Display project start date */}
+                        {project && <p className="text-sm text-blue-600 mt-1">Project Start Date: {new Date(project.start_date).toLocaleDateString()}</p>}
                     </div>
                     <div className="flex-1">
                         <label className="block text-lg font-medium text-gray-800 mb-2">End Date</label>
@@ -179,6 +172,8 @@ export default function AddNewTaskPage() {
                         {error1 && <p className="text-red-500 text-sm mt-1">{error1}</p>}
                         {error3 && <p className="text-red-500 text-sm mt-1">{error3}</p>}
                         {error5 && <p className="text-red-500 text-sm mt-1">{error5}</p>}
+                        {/* Display project end date */}
+                        {project && <p className="text-sm text-blue-600 mt-1">Project End Date: {new Date(project.end_date).toLocaleDateString()}</p>}
                     </div>
                 </div>
                 <hr className="border-gray-300 mb-6" />
@@ -193,7 +188,7 @@ export default function AddNewTaskPage() {
                     />
                 </div>
                 <hr className="border-gray-300 mb-6" />
-                {/* <div className="mb-6">
+                <div className="mb-6">
                     <label className="block text-lg font-medium text-gray-800 mb-2">Status</label>
                     <select
                         name="status"
@@ -201,20 +196,9 @@ export default function AddNewTaskPage() {
                         onChange={handleChange}
                         className="shadow-md appearance-none border-2 border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600 transition duration-300 ease-in-out hover:border-blue-500"
                     >
-                        <option value="Pending">Pending</option>
                         <option value="In Progress">In Progress</option>
                         <option value="Completed">Completed</option>
                     </select>
-                </div> */}
-
-                <div className="mb-6">
-                    <label className="block text-lg font-medium text-gray-800 mb-2">Status</label>
-                    <input
-                        type="text"
-                        value={formData.start_date ? (new Date(formData.start_date) >= new Date() ? 'Pending' : 'In Progress') : ''}
-                        className="shadow-md appearance-none border-2 border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 bg-gray-100"
-                        readOnly
-                    />
                 </div>
 
                 <hr className="border-gray-300 mb-6" />
