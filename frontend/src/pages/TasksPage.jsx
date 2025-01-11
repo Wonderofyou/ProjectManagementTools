@@ -11,8 +11,7 @@ export default function TasksPage() {
     const [selectedTask, setSelectedTask] = useState(null);
     const [showNotification, setShowNotification] = useState(false);
     const [NotificationMessage, setNotificationMessage] = useState("");
-    const [userRole, setUserRole] = useState('');
-
+    const [userRole, setUserRole] = useState('');  // State to store user's role
 
     useEffect(() => {
         axios.get(`/v1/tasks/get-tasks/${projectId}`)
@@ -22,17 +21,18 @@ export default function TasksPage() {
             .catch(error => {
                 console.error("Error fetching tasks:", error);
             });
-    }, []);
+    }, [projectId]);
 
     useEffect(() => {
-        axios.get(`/v1/tasks/get-user-info/${projectId}`)
+        // Fetch project info to check user role
+        axios.get(`/v1/tasks/get-project-info/${projectId}`)
             .then(response => {
-                setUserRole(response.data.userRole);
+                setUserRole(response.data.userRole);  // Set user role
             })
             .catch(error => {
-                console.error("Error  user information:", error);
+                console.error("Error fetching project info:", error);
             });
-    }, []);
+    }, [projectId]);
 
     const handleStatusChange = async (task, newStatus) => {
         try {
@@ -52,7 +52,6 @@ export default function TasksPage() {
                         : t
                 )
             );
-
         } catch (error) {
             const errorMessage = error.response?.data?.message || error.message || "Unknown error occurred";
             setNotificationMessage(errorMessage);
@@ -62,10 +61,10 @@ export default function TasksPage() {
 
     const getStatusColor = (status) => {
         switch (status) {
-            case 'Finish':
-                return 'bg-green-500 text-white'; // Green for finished tasks
-            case 'On Progress':
-                return 'bg-blue-500 text-white'; // Blue for ongoing tasks
+            case 'Completed':
+                return 'bg-green-500 text-white'; // Green for completed tasks
+            case 'In Progress':
+                return 'bg-yellow-500 text-white'; // Yellow for in-progress tasks
             case 'Pending':
             default:
                 return 'bg-gray-500 text-white'; // Default color for pending tasks
@@ -74,14 +73,14 @@ export default function TasksPage() {
 
     const getPriorityColor = (priority) => {
         switch (priority) {
-            case 'High':
-                return 'bg-red-500 text-white';
-            case 'Medium':
-                return 'bg-yellow-500 text-white';
             case 'Low':
-                return 'bg-green-500 text-white';
+                return 'bg-green-500 text-white'; // Green for low priority
+            case 'Medium':
+                return 'bg-yellow-500 text-white'; // Yellow for medium priority
+            case 'High':
+                return 'bg-red-500 text-white'; // Red for high priority
             default:
-                return 'bg-gray-500 text-white';
+                return 'bg-gray-500 text-white'; // Default for undefined priority
         }
     };
 
@@ -102,7 +101,7 @@ export default function TasksPage() {
     };
 
     const handleDeleteClick = (e, task) => {
-        e.preventDefault();
+        e.stopPropagation();  // Prevent click event from triggering other actions
         setSelectedTask(task);
         setShowDeleteModal(true);
     };
@@ -117,10 +116,20 @@ export default function TasksPage() {
             );
             setNotificationMessage("Task deleted successfully.");
             setShowNotification(true);
+
+            // Set a timeout to hide the notification after 5 seconds
+            setTimeout(() => {
+                setShowNotification(false);
+            }, 5000);
         } catch (error) {
             const errorMessage = error.response?.data?.message || error.message || "Unknown error occurred";
             setNotificationMessage(errorMessage);
             setShowNotification(true);
+
+            // Set a timeout to hide the error notification after 5 seconds
+            setTimeout(() => {
+                setShowNotification(false);
+            }, 5000);
         } finally {
             setShowDeleteModal(false);
             setSelectedTask(null);
@@ -156,22 +165,16 @@ export default function TasksPage() {
                                 >
                                     {task.task_id.status}
                                 </button>
-                                {selectedTask === task && (
-                                    <div className="absolute bg-white border rounded-lg shadow-lg mt-2 z-50">
-                                        {["In Progress", "Completed"].map((status) => (
-                                            <button
-                                                key={status}
-                                                className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-200"
-                                                onClick={() => {
-                                                    handleStatusChange(task, status);
-                                                    setSelectedTask(null);
-                                                }}
-                                            >
-                                                {status}
-                                            </button>
-                                        ))}
-                                    </div>
-                                )}
+                            </div>
+
+                            {/* Priority button with dynamic color */}
+                            <div>
+                                <button
+                                    className={`px-4 py-2 rounded-full text-white ${getPriorityColor(task.task_id.priority)}`}
+                                    disabled
+                                >
+                                    {task.task_id.priority}
+                                </button>
                             </div>
                         </div>
 
@@ -213,17 +216,45 @@ export default function TasksPage() {
                 </button>
             </div>
 
-            {userRole === 'admin' && (
-                <div className="text-center mt-8">
-                    <Link
-                        to={`/projects/${projectId}/tasks/new`}
-                        className="inline-flex items-center gap-2 px-6 py-3 bg-black text-white rounded-full hover:bg-gray-800"
-                    >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-                        </svg>
-                        Add new task
-                    </Link>
+            {/* Always show the "Add new task" button */}
+            <div className="text-center mt-8">
+                <Link
+                    to={`/projects/${projectId}/tasks/new`}
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-black text-white rounded-full hover:bg-gray-800"
+                >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                    Add new task
+                </Link>
+            </div>
+
+            {/* Show the notification */}
+            {showNotification && (
+                <div className="text-center mt-4 text-red-500">{NotificationMessage}</div>
+            )}
+
+            {/* Delete confirmation modal */}
+            {showDeleteModal && selectedTask && (
+                <div className="fixed inset-0 flex justify-center items-center bg-gray-500 bg-opacity-50">
+                    <div className="bg-white p-6 rounded-lg shadow-lg">
+                        <h2 className="text-lg font-semibold text-gray-800">Confirm Delete</h2>
+                        <p className="text-gray-600 mt-2">Are you sure you want to delete this task?</p>
+                        <div className="mt-4 flex justify-between">
+                            <button
+                                onClick={handleConfirmDelete}
+                                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+                            >
+                                Yes, Delete
+                            </button>
+                            <button
+                                onClick={() => setShowDeleteModal(false)}
+                                className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
                 </div>
             )}
         </div>
