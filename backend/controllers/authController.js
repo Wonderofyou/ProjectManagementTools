@@ -40,7 +40,7 @@ const authController = {
         res.status(422).json('pass not ok');
       }
     } else {
-      res.json('not found');
+      res.status(422).json('email not found');
     }
   },
 
